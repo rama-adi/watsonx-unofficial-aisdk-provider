@@ -1,8 +1,15 @@
-import type { EmbeddingModelV1, LanguageModelV1, ProviderV1 } from "@ai-sdk/provider";
-import type { WatsonxChatModelId, WatsonxChatSetting, WatsonxEmbeddingModelId } from "./types/watsonx-settings";
-import { loadApiKey, loadOptionalSetting, loadSetting, withoutTrailingSlash, type FetchFunction } from "@ai-sdk/provider-utils";
-import { WatsonxChatLanguageModel } from "./models/watsonx-chat-language-model";
-import { WatsonxEmbeddingModel, type WatsonxEmbeddingSetting } from "./models/watsonx-embedding-model";
+import type {EmbeddingModelV1, LanguageModelV1, ProviderV1} from "@ai-sdk/provider";
+import type {WatsonxChatModelId, WatsonxChatSetting, WatsonxEmbeddingModelId} from "./types/watsonx-settings";
+import {
+    loadApiKey,
+    loadOptionalSetting,
+    loadSetting,
+    withoutTrailingSlash,
+    type FetchFunction
+} from "@ai-sdk/provider-utils";
+import {WatsonxChatLanguageModel} from "./models/chat-models/watsonx-chat-language-model.ts";
+import {WatsonxEmbeddingModel} from "./models/embedding-models/watsonx-embedding-model.ts";
+import type {WatsonxEmbeddingSetting} from "./models/embedding-models/watsonx-embedding-model-settings.ts";
 
 export interface WatsonxProvider extends ProviderV1 {
     /*
@@ -27,56 +34,58 @@ export interface WatsonxProvider extends ProviderV1 {
      * Creates a new WatsonxEmbeddingModel instance with the specified model ID and optional settings.
      */
     embedding(modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting): EmbeddingModelV1<string>;
+
     textEmbeddingModel(modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting): EmbeddingModelV1<string>;
+
     textEmbedding(modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting): EmbeddingModelV1<string>;
 }
 
 export interface WatsonxProviderSetting {
     /**
-        The cluster which you host your watsonx ai project
+     The cluster which you host your watsonx ai project
 
-        This uses the default IBM watsonx API URL (which is: https://{cluster url}.ml.cloud.ibm.com).
+     This uses the default IBM watsonx API URL (which is: https://{cluster url}.ml.cloud.ibm.com).
 
-        Of course you can always override it in clusterURL
-    */
+     Of course, you can always override it in clusterURL
+     */
     cluster?: "ca-tor" | "jp-tok" | "eu-gb" | "eu-de" | "us-south" | "au-syd";
 
     /**
-        The Project ID that hosts your watsonx model
+     The Project ID that hosts your watsonx model
 
-        Find it in the GUI here: https://{cluster}.dataplatform.cloud.ibm.com/projects/?context=wx click on your project > manage
+     Find it in the GUI here: https://{cluster}.dataplatform.cloud.ibm.com/projects/?context=wx click on your project > manage
 
-        Of course you can always override it in clusterURL
-    */
+     Of course, you can always override it in clusterURL
+     */
     projectID?: string;
 
     /**
-        Custom cluster URL
-    */
+     Custom cluster URL
+     */
     clusterURL?: string;
 
     /**
-        Bearer token that is being send using the `Authorization` header.
-        It defaults to the `MISTRAL_API_KEY` environment variable.
+     Bearer token that is being send using the `Authorization` header.
+     It defaults to the `MISTRAL_API_KEY` environment variable.
 
-        The easiest way to obtain this token:
+     The easiest way to obtain this token:
 
-        https://cloud.ibm.com/docs/account?topic=account-iamtoken_from_apikey#iamtoken_from_apikey 
-        
-        or via this cURL command:
-        `curl -X POST 'https://iam.cloud.ibm.com/identity/token' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=MY_APIKEY'`
+     https://cloud.ibm.com/docs/account?topic=account-iamtoken_from_apikey#iamtoken_from_apikey
+
+     or via this cURL command:
+     `curl -X POST 'https://iam.cloud.ibm.com/identity/token' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=MY_APIKEY'`
      */
     bearerToken?: string;
 
     /**
-        Custom headers to include in the requests.
-    */
+     Custom headers to include in the requests.
+     */
     headers?: Record<string, string>;
 
     /**
-        Custom fetch implementation. You can use it as a middleware to intercept requests,
-        or to provide a custom fetch implementation for e.g. testing.
-      */
+     Custom fetch implementation. You can use it as a middleware to intercept requests,
+     or to provide a custom fetch implementation for e.g. testing.
+     */
     fetch?: FetchFunction;
 }
 

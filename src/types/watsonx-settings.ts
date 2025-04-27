@@ -47,6 +47,5 @@ export const functionCallingModels = [
   'meta-llama/llama-3-3-70b-instruct'
 ] as const
 // </autogen watsonx-settings-models>
-// Amogus 
 
 export interface WatsonxChatSetting {}

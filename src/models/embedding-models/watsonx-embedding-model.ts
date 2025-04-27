@@ -4,34 +4,15 @@ import {
     type EmbeddingModelV1Embedding,
 
 } from '@ai-sdk/provider';
-import { combineHeaders, createJsonResponseHandler, postJsonToApi, type FetchFunction } from '@ai-sdk/provider-utils';
-import type { WatsonxEmbeddingModelId } from '../types/watsonx-settings';
-import type { WatsonxProviderSetting } from '../provider';
-import { z } from 'zod';
-import { watsonxFailedResponseHandler } from '../types/watsonx-response-schema';
-
-
-export interface WatsonxEmbeddingSetting {
-    /**
-  Override the maximum number of embeddings per call.
-     */
-    maxEmbeddingsPerCall?: number;
-
-    /**
-  Override the parallelism of embedding calls.
-      */
-    supportsParallelCalls?: boolean;
-}
+import {combineHeaders, createJsonResponseHandler, postJsonToApi, type FetchFunction} from '@ai-sdk/provider-utils';
+import type {WatsonxEmbeddingModelId} from '../../types/watsonx-settings.ts';
+import type {WatsonxProviderSetting} from '../../provider.ts';
+import {z} from 'zod';
+import {watsonxFailedResponseHandler} from '../../types/watsonx-response-schema.ts';
+import type {WatsonxEmbeddingConfig, WatsonxEmbeddingSetting} from "./watsonx-embedding-model-settings.ts";
 
 export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
-    private readonly config: {
-        provider: string;
-        clusterURL: string;
-        projectID: string;
-        headers: () => Record<string, string | undefined>;
-        fetch?: FetchFunction;
-        version: string;
-    }
+    private readonly config: WatsonxEmbeddingConfig
 
     readonly specificationVersion = 'v1';
     readonly modelId: WatsonxEmbeddingModelId;
@@ -55,14 +36,7 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
     constructor(
         modelId: WatsonxEmbeddingModelId,
         settings: WatsonxEmbeddingSetting,
-        config: {
-            provider: string;
-            clusterURL: string;
-            projectID: string;
-            headers: () => Record<string, string | undefined>;
-            fetch?: FetchFunction;
-            version: string;
-        },
+        config: WatsonxEmbeddingConfig,
     ) {
         this.modelId = modelId;
         this.settings = settings;
@@ -90,13 +64,13 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
     });
 
     async doEmbed({
-        values,
-        abortSignal,
-        headers,
-    }: Parameters<EmbeddingModelV1<string>['doEmbed']>[0]): Promise<
+                      values,
+                      abortSignal,
+                      headers,
+                  }: Parameters<EmbeddingModelV1<string>['doEmbed']>[0]): Promise<
         Awaited<ReturnType<EmbeddingModelV1<string>['doEmbed']>>
     > {
-       
+
         if (values.length > this.maxEmbeddingsPerCall) {
             throw new TooManyEmbeddingValuesForCallError({
                 provider: this.provider,
@@ -106,7 +80,7 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
             });
         }
 
-        const { responseHeaders, value: response } = await postJsonToApi({
+        const {responseHeaders, value: response} = await postJsonToApi({
             url: `${this.config.clusterURL}/text/embeddings?version=${this.config.version}`,
             headers: combineHeaders(this.config.headers(), headers),
             body: {
@@ -126,7 +100,7 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
             usage: {
                 tokens: response.input_token_count
             },
-            rawResponse: { headers: responseHeaders },
+            rawResponse: {headers: responseHeaders},
         };
     }
 }

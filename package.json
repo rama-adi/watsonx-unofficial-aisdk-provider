@@ -1,7 +1,7 @@
 {
-  "name": "@rama-adi/watsonx-unofficial-aisdk-provider",
+  "name": "@rama-adi/watsonx-unofficial-ai-provider",
   "version": "0.0.1",
-  "description": "Unofficial WatsonX provider for the Vercel AI SDK",
+  "description": "Unofficial Watsonx provider for the Vercel AI SDK",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -50,6 +50,11 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rama-adi/watsonx-unofficial-aisdk-provider.git"
+  },
+  "author": {
+    "email": "rama@rama-adi.dev",
+    "name": "Rama Adi",
+    "url": "https://rama-adi.dev"
   },
   "bugs": {
     "url": "https://github.com/rama-adi/watsonx-unofficial-aisdk-provider/issues"

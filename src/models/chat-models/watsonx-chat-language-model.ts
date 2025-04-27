@@ -11,22 +11,27 @@ import {
     type ParseResult,
     combineHeaders,
     createEventSourceResponseHandler,
-    createJsonErrorResponseHandler,
     createJsonResponseHandler,
     postJsonToApi
 } from "@ai-sdk/provider-utils";
-import { z } from "zod";
+import {z} from "zod";
 import {
-    type WatsonxChatModelId,
-    type WatsonxChatSetting,
     functionCallingModels,
-} from "../types/watsonx-settings";
-import { mapWatsonxFinishReason } from "../utils/watsonx-finish-reason";
-import { prepareTools } from "../utils/watsonx-prepare-tools";
-import { convertToWatsonxChatMessages } from "../utils/convert-to-watsonx-chat-messages";
-import { watsonxChatChunkSchema, watsonxChatResponseSchema, watsonxErrorResponseSchema, watsonxFailedResponseHandler } from "../types/watsonx-response-schema";
-import { getResponseMetadata } from "../utils/get-response-metadata";
-
+} from "../../types/watsonx-settings.ts";
+import {mapWatsonxFinishReason} from "../../utils/watsonx-finish-reason.ts";
+import {prepareTools} from "../../utils/watsonx-prepare-tools.ts";
+import {convertToWatsonxChatMessages} from "../../utils/convert-to-watsonx-chat-messages.ts";
+import {
+    watsonxChatChunkSchema,
+    watsonxChatResponseSchema,
+    watsonxFailedResponseHandler
+} from "../../types/watsonx-response-schema.ts";
+import {getResponseMetadata} from "../../utils/get-response-metadata.ts";
+import type {
+    WatsonxChatConfig,
+    WatsonxChatModelId,
+    WatsonxChatSetting
+} from "./watsonx-chat-language-model-settings.ts";
 
 export class WatsonxChatLanguageModel implements LanguageModelV1 {
     readonly specificationVersion = "v1";
@@ -35,26 +40,12 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
 
     readonly modelId: WatsonxChatModelId;
     readonly settings: WatsonxChatSetting;
-    private readonly config: {
-        provider: string;
-        clusterURL: string;
-        projectID: string;
-        headers: () => Record<string, string | undefined>;
-        fetch?: FetchFunction;
-        version: string;
-    };
+    private readonly config: WatsonxChatConfig;
 
     constructor(
         modelId: WatsonxChatModelId,
         settings: WatsonxChatSetting,
-        config: {
-            provider: string;
-            clusterURL: string;
-            projectID: string;
-            headers: () => Record<string, string | undefined>;
-            fetch?: FetchFunction;
-            version: string;
-        }
+        config: WatsonxChatConfig
     ) {
         this.modelId = modelId;
         this.settings = settings;
@@ -63,10 +54,6 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
 
     get provider(): string {
         return this.config.provider;
-    }
-
-    supportsUrl(url: URL): boolean {
-        return url.protocol === "https:";
     }
 
     private sanityCheck(options: Parameters<LanguageModelV1['doGenerate']>[0]) {
@@ -129,7 +116,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
             max_tokens: maxTokens,
             presence_penalty: presencePenalty,
             top_p: topP,
-            response_format: responseFormat?.type === 'json' ? { type: 'json_object' } : undefined,
+            response_format: responseFormat?.type === 'json' ? {type: 'json_object'} : undefined,
             seed,
             messages: convertToWatsonxChatMessages(prompt),
             time_limit: providerMetadata?.watsonx?.timeLimit
@@ -137,9 +124,9 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
 
         switch (type) {
             case 'regular': {
-                const { tools, tool_choice, toolWarnings } = prepareTools(mode);
+                const {tools, tool_choice, toolWarnings} = prepareTools(mode);
                 return {
-                    args: { ...baseArgs, tools, tool_choice },
+                    args: {...baseArgs, tools, tool_choice},
                     warnings: [...warnings, ...toolWarnings],
                 };
             }
@@ -148,7 +135,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                 return {
                     args: {
                         ...baseArgs,
-                        response_format: { type: 'json_object' },
+                        response_format: {type: 'json_object'},
                     },
                     warnings,
                 };
@@ -159,7 +146,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                     args: {
                         ...baseArgs,
                         tools: [
-                            { type: 'function', function: mode.tool }
+                            {type: 'function', function: mode.tool}
                         ],
                     },
                     warnings,
@@ -175,7 +162,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
         options: Parameters<LanguageModelV1['doGenerate']>[0]
     ): Promise<Awaited<ReturnType<LanguageModelV1['doGenerate']>>> {
         this.sanityCheck(options);
-        const { args, warnings } = this.getArgs(options);
+        const {args, warnings} = this.getArgs(options);
 
         const {
             responseHeaders,
@@ -193,7 +180,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
             fetch: this.config.fetch
         });
 
-        const { messages: rawPrompt, ...rawSettings } = args;
+        const {messages: rawPrompt, ...rawSettings} = args;
         const choice = response.choices[0];
 
         if (!choice) {
@@ -209,8 +196,8 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                 args: toolCall.function.arguments
             })),
             finishReason: mapWatsonxFinishReason(choice.finish_reason),
-            usage: { promptTokens: response.usage.prompt_tokens, completionTokens: response.usage.completion_tokens },
-            rawCall: { rawPrompt, rawSettings },
+            usage: {promptTokens: response.usage.prompt_tokens, completionTokens: response.usage.completion_tokens},
+            rawCall: {rawPrompt, rawSettings},
             rawResponse: {
                 headers: responseHeaders,
                 body: rawResponse,
@@ -228,12 +215,12 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
         options: Parameters<LanguageModelV1['doStream']>[0],
     ): Promise<Awaited<ReturnType<LanguageModelV1['doStream']>>> {
         this.sanityCheck(options);
-        const { args, warnings } = this.getArgs(options);
+        const {args, warnings} = this.getArgs(options);
         const url = `${this.config.clusterURL}/text/chat_stream?version=${this.config.version}`;
-      
-        const body = { ...args, stream: true };
-        
-        const { value: response, responseHeaders } = await postJsonToApi({
+
+        const body = {...args, stream: true};
+
+        const {value: response, responseHeaders} = await postJsonToApi({
             url,
             headers: combineHeaders(this.config.headers(), options.headers),
             body,
@@ -245,7 +232,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
             fetch: this.config.fetch
         });
 
-        const { messages: rawPrompt, ...rawSettings } = args;
+        const {messages: rawPrompt, ...rawSettings} = args;
 
         let finishReason: LanguageModelV1FinishReason = 'unknown';
         let usage: { promptTokens: number; completionTokens: number } = {
@@ -254,7 +241,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
         };
         let chunkNumber = 0;
         let trimLeadingSpace = false;
-       
+
 
         return {
             stream: response.pipeThrough(
@@ -263,9 +250,9 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                     LanguageModelV1StreamPart
                 >({
                     transform(chunk, controller) {
-                    
+
                         if (!chunk.success) {
-                            controller.enqueue({ type: 'error', error: chunk.error });
+                            controller.enqueue({type: 'error', error: chunk.error});
                             return;
                         }
 
@@ -343,7 +330,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                             for (const toolCall of delta.tool_calls) {
                                 // Generate a temporary ID if none is provided
                                 const toolCallId = toolCall.id ?? `temp-${chunkNumber}-${toolCall.index ?? 0}`;
-                                
+
                                 // watsonx tool calls come in one piece:
                                 controller.enqueue({
                                     type: 'tool-call-delta',
@@ -352,7 +339,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                                     toolName: toolCall.function.name,
                                     argsTextDelta: toolCall.function.arguments,
                                 });
-                               
+
                                 controller.enqueue({
                                     type: 'tool-call',
                                     toolCallType: 'function',
@@ -365,13 +352,13 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                     },
 
                     flush(controller) {
-                        controller.enqueue({ type: 'finish', finishReason, usage });
+                        controller.enqueue({type: 'finish', finishReason, usage});
                     },
                 }),
             ),
-            rawCall: { rawPrompt, rawSettings },
-            rawResponse: { headers: responseHeaders },
-            request: { body: JSON.stringify(body) },
+            rawCall: {rawPrompt, rawSettings},
+            rawResponse: {headers: responseHeaders},
+            request: {body: JSON.stringify(body)},
             warnings,
         };
     }

@@ -1,3 +1,7 @@
+import {updateChatModelIds} from "./update-chat-model-ids.ts";
+import {updateEmbeddingModelIds} from "./update-embedding-model-ids.ts";
+import {updateSupportedModelsFile} from "./update-supported-models-file.ts";
+
 namespace RESPONSE {
     export interface Root {
         total_count: number
@@ -231,9 +235,15 @@ namespace RESPONSE {
         available_date: string
     }
 }
+export type APIResponse = RESPONSE.Root;
 
-export async function getModels() {
+async function main() {
     const result = await fetch("https://jp-tok.ml.cloud.ibm.com/ml/v1/foundation_model_specs?version=2024-10-10");
-    const json = await result.json() as RESPONSE.Root;
-    return json
+    const response = await result.json() as APIResponse;
+
+    await updateChatModelIds(response);
+    await updateEmbeddingModelIds(response);
+    await updateSupportedModelsFile(response);
 }
+
+main();

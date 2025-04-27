@@ -2,6 +2,9 @@
   "name": "demos",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "refresh": "cd .. && npm run build && cd demos && bun install"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -9,6 +12,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@rama-adi/watsonx-unofficial-ai-provider": "file:..",
     "@inquirer/prompts": "^7.5.0",
     "ai": "^4.3.10",
     "boxen": "^8.0.1",
