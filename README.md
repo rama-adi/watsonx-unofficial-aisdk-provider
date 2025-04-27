@@ -1,6 +1,7 @@
 # Unofficial watsonx.ai Provider for AI SDK
 
-> ⚠️ **Warning**: This SDK is experimental and primarily developed for personal use. APIs and functionality may change
+> [!WARNING]  
+> This SDK is experimental and primarily developed for personal use. APIs and functionality may change
 > at any time without notice. It is not an official product and is not supported by IBM. Use at your own risk,
 > particularly in production environments.
 
