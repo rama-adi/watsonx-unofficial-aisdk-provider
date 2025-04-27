@@ -1,5 +1,4 @@
 import {
-    NoSuchModelError,
     UnsupportedFunctionalityError,
     type LanguageModelV1,
     type LanguageModelV1CallWarning,
@@ -7,7 +6,6 @@ import {
     type LanguageModelV1StreamPart
 } from "@ai-sdk/provider";
 import {
-    type FetchFunction,
     type ParseResult,
     combineHeaders,
     createEventSourceResponseHandler,
@@ -15,22 +13,20 @@ import {
     postJsonToApi
 } from "@ai-sdk/provider-utils";
 import {z} from "zod";
-import {
-    functionCallingModels,
-} from "../../types/watsonx-settings.ts";
 import {mapWatsonxFinishReason} from "../../utils/watsonx-finish-reason.ts";
 import {prepareTools} from "../../utils/watsonx-prepare-tools.ts";
-import {convertToWatsonxChatMessages} from "../../utils/convert-to-watsonx-chat-messages.ts";
+import {convertToWatsonxChatMessages} from "./convert-to-watsonx-chat-messages.ts";
 import {
     watsonxChatChunkSchema,
     watsonxChatResponseSchema,
     watsonxFailedResponseHandler
 } from "../../types/watsonx-response-schema.ts";
 import {getResponseMetadata} from "../../utils/get-response-metadata.ts";
-import type {
-    WatsonxChatConfig,
-    WatsonxChatModelId,
-    WatsonxChatSetting
+import {
+    functionCallingModels,
+    type WatsonxChatConfig,
+    type WatsonxChatModelId,
+    type WatsonxChatSetting
 } from "./watsonx-chat-language-model-settings.ts";
 
 export class WatsonxChatLanguageModel implements LanguageModelV1 {

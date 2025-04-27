@@ -1,5 +1,4 @@
-import type {EmbeddingModelV1, LanguageModelV1, ProviderV1} from "@ai-sdk/provider";
-import type {WatsonxChatModelId, WatsonxChatSetting, WatsonxEmbeddingModelId} from "./types/watsonx-settings";
+import type {EmbeddingModelV1, ProviderV1} from "@ai-sdk/provider";
 import {
     loadApiKey,
     loadOptionalSetting,
@@ -9,7 +8,14 @@ import {
 } from "@ai-sdk/provider-utils";
 import {WatsonxChatLanguageModel} from "./models/chat-models/watsonx-chat-language-model.ts";
 import {WatsonxEmbeddingModel} from "./models/embedding-models/watsonx-embedding-model.ts";
-import type {WatsonxEmbeddingSetting} from "./models/embedding-models/watsonx-embedding-model-settings.ts";
+import type {
+    WatsonxEmbeddingModelId,
+    WatsonxEmbeddingSetting
+} from "./models/embedding-models/watsonx-embedding-model-settings.ts";
+import type {
+    WatsonxChatModelId,
+    WatsonxChatSetting
+} from "./models/chat-models/watsonx-chat-language-model-settings.ts";
 
 export interface WatsonxProvider extends ProviderV1 {
     /*
@@ -42,7 +48,7 @@ export interface WatsonxProvider extends ProviderV1 {
 
 export interface WatsonxProviderSetting {
     /**
-     The cluster which you host your watsonx ai project
+     The cluster which you host your watsonx AI project
 
      This uses the default IBM watsonx API URL (which is: https://{cluster url}.ml.cloud.ibm.com).
 
