@@ -1,6 +1,7 @@
 import {updateChatModelIds} from "./update-chat-model-ids.ts";
 import {updateEmbeddingModelIds} from "./update-embedding-model-ids.ts";
 import {updateSupportedModelsFile} from "./update-supported-models-file.ts";
+import {updateCompletionModelIds} from "./update-completion-model-ids.ts";
 
 namespace RESPONSE {
     export interface Root {
@@ -244,6 +245,7 @@ async function main() {
     await updateChatModelIds(response);
     await updateEmbeddingModelIds(response);
     await updateSupportedModelsFile(response);
+    await updateCompletionModelIds(response);
 }
 
 main();

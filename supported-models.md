@@ -21,18 +21,17 @@ Some chat models also support **function calling**, allowing more advanced inter
 <!-- <autogen readme-chat-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-chat-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-04-27T15:47:14.665Z -->
+<!-- Generated on: 2025-04-27T19:54:23.594Z -->
 <!-- Description: Chat models tables -->
 
-| ID                                         | Provider   | Function Calling | Structured Outputs |
-|--------------------------------------------|------------|------------------|--------------------|
-| `ibm/granite-3-2b-instruct`                | IBM        | ✅                | ✅                  |
-| `ibm/granite-3-8b-instruct`                | IBM        | ✅                | ✅                  |
-| `meta-llama/llama-3-2-11b-vision-instruct` | Meta       | ✅                | ✅                  |
-| `meta-llama/llama-3-3-70b-instruct`        | Meta       | ✅                | ✅                  |
-| `meta-llama/llama-guard-3-11b-vision`      | Meta       | ❌                | ❌                  |
-| `mistralai/mixtral-8x7b-instruct-v01`      | Mistral AI | ❌                | ❌                  |
-
+| ID | Provider | Function Calling | Structured Outputs |
+|----|----------|------------------|--------------------|
+| `ibm/granite-3-2b-instruct` | IBM | ✅ | ✅ |
+| `ibm/granite-3-8b-instruct` | IBM | ✅ | ✅ |
+| `meta-llama/llama-3-2-11b-vision-instruct` | Meta | ✅ | ✅ |
+| `meta-llama/llama-3-3-70b-instruct` | Meta | ✅ | ✅ |
+| `meta-llama/llama-guard-3-11b-vision` | Meta | ❌ | ❌ |
+| `mistralai/mixtral-8x7b-instruct-v01` | Mistral AI | ❌ | ❌ |
 <!-- </autogen readme-chat-models> -->
 
 ### Usage Example
@@ -64,21 +63,20 @@ These embeddings are useful for tasks like **semantic search**, **text similarit
 <!-- <autogen readme-embedding-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-embedding-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-04-27T15:47:14.666Z -->
+<!-- Generated on: 2025-04-27T19:54:23.594Z -->
 <!-- Description: Embedding models tables -->
 
-| ID                                        | Provider              | Max Sequence Length | Embedding Dimensions |
-|-------------------------------------------|-----------------------|---------------------|----------------------|
-| `ibm/granite-embedding-107m-multilingual` | IBM                   | 512                 | 384                  |
-| `ibm/granite-embedding-278m-multilingual` | IBM                   | 512                 | 768                  |
-| `ibm/slate-125m-english-rtrvr`            | IBM                   | 512                 | 768                  |
-| `ibm/slate-125m-english-rtrvr-v2`         | IBM                   | 512                 | 768                  |
-| `ibm/slate-30m-english-rtrvr`             | IBM                   | 512                 | 384                  |
-| `ibm/slate-30m-english-rtrvr-v2`          | IBM                   | 512                 | 384                  |
-| `intfloat/multilingual-e5-large`          | intfloat              | 512                 | 1024                 |
-| `sentence-transformers/all-minilm-l12-v2` | sentence-transformers | 128                 | 384                  |
-| `sentence-transformers/all-minilm-l6-v2`  | sentence-transformers | 256                 | 384                  |
-
+| ID | Provider | Max Sequence Length | Embedding Dimensions |
+|----|----------|---------------------|----------------------|
+| `ibm/granite-embedding-107m-multilingual` | IBM | 512 | 384 |
+| `ibm/granite-embedding-278m-multilingual` | IBM | 512 | 768 |
+| `ibm/slate-125m-english-rtrvr` | IBM | 512 | 768 |
+| `ibm/slate-125m-english-rtrvr-v2` | IBM | 512 | 768 |
+| `ibm/slate-30m-english-rtrvr` | IBM | 512 | 384 |
+| `ibm/slate-30m-english-rtrvr-v2` | IBM | 512 | 384 |
+| `intfloat/multilingual-e5-large` | intfloat | 512 | 1024 |
+| `sentence-transformers/all-minilm-l12-v2` | sentence-transformers | 128 | 384 |
+| `sentence-transformers/all-minilm-l6-v2` | sentence-transformers | 256 | 384 |
 <!-- </autogen readme-embedding-models> -->
 
 ### Usage Example
@@ -97,29 +95,28 @@ const {embedding} = await embed({
 
 ---
 
-## 3. Text Generation Models
+## 3. Completion Models
 
-Text generation models produce text outputs based on a given input prompt.  
+Completion models produce text outputs based on a given input prompt.  
 Unlike chat models, these do **not** follow the multi-message chat structure — they simply take a prompt and return
 generated text. *(In theory, you could do multi-turn conversation if you knew how to format the prompt correctly.)*
 
-### Supported Text Generation Models
+### Supported Completion Models
 
-<!-- <autogen readme-tg-models> -->
-<!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-tg-models (top and bottom) is auto-generated. -->
+<!-- <autogen readme-completion-models> -->
+<!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-completion-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-04-27T15:47:14.667Z -->
-<!-- Description: Text generation models tables -->
+<!-- Generated on: 2025-04-27T19:54:23.595Z -->
+<!-- Description: Completion models tables -->
 
-| ID                                         | Provider |
-|--------------------------------------------|----------|
-| `elyza/elyza-japanese-llama-2-7b-instruct` | ELYZA    |
-| `google/flan-t5-xl`                        | Google   |
-| `google/flan-t5-xxl`                       | Google   |
-| `google/flan-ul2`                          | Google   |
-| `ibm/granite-13b-instruct-v2`              | IBM      |
-
-<!-- </autogen readme-tg-models> -->
+| ID | Provider |
+|----|----------|
+| `elyza/elyza-japanese-llama-2-7b-instruct` | ELYZA |
+| `google/flan-t5-xl` | Google |
+| `google/flan-t5-xxl` | Google |
+| `google/flan-ul2` | Google |
+| `ibm/granite-13b-instruct-v2` | IBM |
+<!-- </autogen readme-completion-models> -->
 
 ### Usage Example
 
@@ -128,7 +125,7 @@ import {generateText} from 'ai';
 
 // Simple creative writing prompt
 const {text} = await generateText({
-    model: watsonx.languageModel('google/flan-t5-xxl'),
+    model: watsonx.completion('google/flan-t5-xxl'),
     prompt: 'Invent a new ice cream flavor inspired by a magical forest.',
 });
 

@@ -1,7 +1,7 @@
 // <autogen watsonx-embedding-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-embedding-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-04-27T15:47:14.660Z
+// Generated on: 2025-04-27T19:54:23.593Z
 // Description: All of the supported embedding models fetched from watsonx API. This only take account non-deprecated models.
 
 // Supported embedding models

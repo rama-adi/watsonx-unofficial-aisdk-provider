@@ -92,9 +92,9 @@ async function updateTextgenModels(
 
     const settingsAutogen = createCodegen({
         base: oldContent,
-        id: "readme-tg-models",
+        id: "readme-completion-models",
         markerType: "html",
-        description: "Text generation models tables",
+        description: "Completion models tables",
         content: [
             "| ID | Provider |",
             "|----|----------|",

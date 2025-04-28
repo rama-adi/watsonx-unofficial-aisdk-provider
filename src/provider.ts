@@ -6,7 +6,7 @@ import {
     withoutTrailingSlash,
     type FetchFunction
 } from "@ai-sdk/provider-utils";
-import {WatsonxChatLanguageModel} from "./models/chat-models/watsonx-chat-language-model.ts";
+import {WatsonxChatModel} from "./models/chat-models/watsonx-chat-model.ts";
 import {WatsonxEmbeddingModel} from "./models/embedding-models/watsonx-embedding-model.ts";
 import type {
     WatsonxEmbeddingModelId,
@@ -15,31 +15,32 @@ import type {
 import type {
     WatsonxChatModelId,
     WatsonxChatSetting
-} from "./models/chat-models/watsonx-chat-language-model-settings.ts";
+} from "./models/chat-models/watsonx-chat-model-settings.ts";
+import {WatsonxCompletionModel} from "./models/completion-models/watsonx-completion-model.ts";
+import type {
+    WatsonxCompletionModelId,
+    WatsonxCompletionSetting
+} from "./models/completion-models/watsonx-completion-model-settings.ts";
 
 export interface WatsonxProvider extends ProviderV1 {
     /*
      * Creates a new WatsonxChatLanguageModel instance with the specified model ID and optional settings.
      * This is the default function call syntax for the provider.
      */
-    (modelId: WatsonxChatModelId, settings?: WatsonxChatSetting): WatsonxChatLanguageModel;
+    (modelId: WatsonxChatModelId, settings?: WatsonxChatSetting): WatsonxChatModel;
 
     /*
      * Creates a new WatsonxChatLanguageModel instance with the specified model ID and optional settings.
      * This is equivalent to calling the provider directly.
      */
-    languageModel(modelId: WatsonxChatModelId, settings?: WatsonxChatSetting): WatsonxChatLanguageModel;
-
-    /*
-     * Creates a new WatsonxChatLanguageModel instance with the specified model ID and optional settings.
-     * This is an alias for languageModel() to maintain compatibility with chat-focused interfaces.
-     */
-    chat(modelId: WatsonxChatModelId, settings?: WatsonxChatSetting): WatsonxChatLanguageModel;
+    languageModel(modelId: WatsonxChatModelId, settings?: WatsonxChatSetting): WatsonxChatModel;
 
     /*
      * Creates a new WatsonxEmbeddingModel instance with the specified model ID and optional settings.
      */
     embedding(modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting): EmbeddingModelV1<string>;
+
+    completion(modelId: WatsonxCompletionModelId, settings?: WatsonxCompletionSetting): WatsonxCompletionModel;
 
     textEmbeddingModel(modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting): EmbeddingModelV1<string>;
 
@@ -132,7 +133,7 @@ export function createWatsonx(
     const createChatModel = (
         modelId: WatsonxChatModelId,
         settings: WatsonxChatSetting = {},
-    ) => new WatsonxChatLanguageModel(modelId, settings, {
+    ) => new WatsonxChatModel(modelId, settings, {
         provider: 'watsonx.chat',
         clusterURL,
         projectID,
@@ -146,6 +147,18 @@ export function createWatsonx(
         settings: WatsonxEmbeddingSetting = {},
     ) => new WatsonxEmbeddingModel(modelId, settings, {
         provider: 'watsonx.embedding',
+        clusterURL,
+        projectID,
+        headers: getHeaders,
+        fetch: options.fetch,
+        version: '2024-02-13'
+    });
+
+    const createCompletionModel = (
+        modelId: WatsonxCompletionModelId,
+        settings: WatsonxCompletionSetting = {},
+    ) => new WatsonxCompletionModel(modelId, settings, {
+        provider: 'watsonx.completion',
         clusterURL,
         projectID,
         headers: getHeaders,
@@ -167,10 +180,10 @@ export function createWatsonx(
     };
 
     provider.languageModel = (modelId: WatsonxEmbeddingModelId, settings?: WatsonxChatSetting) => createChatModel(modelId, settings);
-    provider.chat = (modelId: WatsonxEmbeddingModelId, settings?: WatsonxChatSetting) => createChatModel(modelId, settings);
     provider.embedding = (modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting) => createEmbeddingModel(modelId, settings);
     provider.textEmbeddingModel = (modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting) => createEmbeddingModel(modelId, settings);
     provider.textEmbedding = (modelId: WatsonxEmbeddingModelId, settings?: WatsonxEmbeddingSetting) => createEmbeddingModel(modelId, settings);
+    provider.completion = (modelId: WatsonxCompletionModelId, settings?: WatsonxCompletionSetting) => createCompletionModel(modelId, settings);
 
     return provider;
 }

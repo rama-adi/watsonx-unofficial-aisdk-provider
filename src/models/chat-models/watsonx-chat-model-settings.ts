@@ -1,11 +1,11 @@
 import {z} from "zod";
-import {watsonxModerations} from "../../types/watsonx-moderations.ts";
+import {watsonxCommonResponseSchema} from "../../types/watsonx-common-response-schema.ts";
 import type {FetchFunction} from "@ai-sdk/provider-utils";
 
 // <autogen watsonx-chat-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-chat-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-04-27T15:47:14.658Z
+// Generated on: 2025-04-27T19:54:23.590Z
 // Description: All of the supported models fetched from watsonx API. This only take account non-deprecated models.
 
 // Models here can be called from the /chat endpoint
@@ -40,5 +40,5 @@ export type WatsonxChatConfig = {
 
 // watsonx specific settings parameters
 export interface WatsonxChatSetting {
-    moderations?: z.infer<typeof watsonxModerations>
+    moderations?: z.infer<typeof watsonxCommonResponseSchema>
 }

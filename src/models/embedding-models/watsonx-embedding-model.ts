@@ -5,11 +5,15 @@ import {
 
 } from '@ai-sdk/provider';
 import {combineHeaders, createJsonResponseHandler, postJsonToApi, type FetchFunction} from '@ai-sdk/provider-utils';
-import type {WatsonxEmbeddingModelId} from '../../types/watsonx-settings.ts';
 import type {WatsonxProviderSetting} from '../../provider.ts';
 import {z} from 'zod';
 import {watsonxFailedResponseHandler} from '../../types/watsonx-response-schema.ts';
-import type {WatsonxEmbeddingConfig, WatsonxEmbeddingSetting} from "./watsonx-embedding-model-settings.ts";
+import type {
+    WatsonxEmbeddingConfig,
+    WatsonxEmbeddingModelId,
+    WatsonxEmbeddingSetting
+} from "./watsonx-embedding-model-settings.ts";
+import {systemDetailsSchema} from "../../types/watsonx-common-response-schema.ts";
 
 export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
     private readonly config: WatsonxEmbeddingConfig
@@ -53,14 +57,7 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
         }),
         created_at: z.string(),
         input_token_count: z.number(),
-        system: z.object({
-            warnings: z.array(z.object({
-                message: z.string().optional(),
-                id: z.string().optional(),
-                more_info: z.string().optional(),
-                additional_properties: z.record(z.string(), z.unknown()).optional(),
-            })).optional()
-        }).optional()
+        system: systemDetailsSchema
     });
 
     async doEmbed({

@@ -13,12 +13,10 @@ import {
     postJsonToApi
 } from "@ai-sdk/provider-utils";
 import {z} from "zod";
-import {mapWatsonxFinishReason} from "../../utils/watsonx-finish-reason.ts";
+import {mapWatsonxChatFinishReason} from "./watsonx-chat-finish-reason.ts";
 import {prepareTools} from "../../utils/watsonx-prepare-tools.ts";
 import {convertToWatsonxChatMessages} from "./convert-to-watsonx-chat-messages.ts";
 import {
-    watsonxChatChunkSchema,
-    watsonxChatResponseSchema,
     watsonxFailedResponseHandler
 } from "../../types/watsonx-response-schema.ts";
 import {getResponseMetadata} from "../../utils/get-response-metadata.ts";
@@ -27,9 +25,10 @@ import {
     type WatsonxChatConfig,
     type WatsonxChatModelId,
     type WatsonxChatSetting
-} from "./watsonx-chat-language-model-settings.ts";
+} from "./watsonx-chat-model-settings.ts";
+import {watsonxChatChunkSchema, watsonxChatResponseSchema} from "./watsonx-chat-schema.ts";
 
-export class WatsonxChatLanguageModel implements LanguageModelV1 {
+export class WatsonxChatModel implements LanguageModelV1 {
     readonly specificationVersion = "v1";
     readonly defaultObjectGenerationMode = "tool";
     readonly supportsImageUrls = false;
@@ -191,7 +190,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                 toolName: toolCall.function.name,
                 args: toolCall.function.arguments
             })),
-            finishReason: mapWatsonxFinishReason(choice.finish_reason),
+            finishReason: mapWatsonxChatFinishReason(choice.finish_reason),
             usage: {promptTokens: response.usage.prompt_tokens, completionTokens: response.usage.completion_tokens},
             rawCall: {rawPrompt, rawSettings},
             rawResponse: {
@@ -276,7 +275,7 @@ export class WatsonxChatLanguageModel implements LanguageModelV1 {
                         }
 
                         if (choice?.finish_reason != null) {
-                            finishReason = mapWatsonxFinishReason(choice.finish_reason);
+                            finishReason = mapWatsonxChatFinishReason(choice.finish_reason);
                         }
 
                         if (choice?.delta == null) {

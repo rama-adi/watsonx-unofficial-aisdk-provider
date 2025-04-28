@@ -1,6 +1,15 @@
 import {z} from "zod";
 
-export const watsonxModerations = z.object({
+export const systemDetailsSchema = z.object({
+    warnings: z.array(z.object({
+        message: z.string().optional(),
+        id: z.string().optional(),
+        more_info: z.string().optional(),
+        additional_properties: z.record(z.string(), z.unknown()).optional(),
+    })).optional()
+}).optional();
+
+export const watsonxCommonResponseSchema = z.object({
     hap: z.object({
         input: z.object({
             enabled: z.boolean(),

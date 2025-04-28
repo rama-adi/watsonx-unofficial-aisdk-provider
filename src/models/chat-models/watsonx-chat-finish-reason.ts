@@ -1,6 +1,6 @@
 import type { LanguageModelV1FinishReason } from "@ai-sdk/provider";
 
-export function mapWatsonxFinishReason(
+export function mapWatsonxChatFinishReason(
     reason: string | null | undefined
 ): LanguageModelV1FinishReason {
     switch(reason) {
