@@ -125,7 +125,11 @@ import {generateText} from 'ai';
 
 // Simple creative writing prompt
 const {text} = await generateText({
-    model: watsonx.completion('google/flan-t5-xxl'),
+    model: watsonx.completion('google/flan-t5-xxl', {
+        returnOptions: {
+            inputText: true, // by default, input text is not returned
+        }
+    }),
     prompt: 'Invent a new ice cream flavor inspired by a magical forest.',
 });
 

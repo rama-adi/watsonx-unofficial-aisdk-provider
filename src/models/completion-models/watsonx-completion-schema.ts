@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {systemDetailsSchema, watsonxCommonResponseSchema} from "../../types/watsonx-common-response-schema.ts";
+import {systemDetailsSchema, watsonxModerationsSchema} from "../../types/watsonx-common-schema.ts";
 
 const textgenTokenInfo = z.array(z.object({
     text: z.string(),
@@ -20,9 +20,9 @@ export const watsonxCompletionChunkSchema = z.object({
         generated_token_count: z.number().nullish(),
         input_token_count: z.number().nullish(),
         seed: z.number().nullish(),
-        generated_tokens: textgenTokenInfo.nullish(),
-        input_tokens: textgenTokenInfo.nullish(),
-        moderations: watsonxCommonResponseSchema,
+        generated_tokens: textgenTokenInfo.optional(),
+        input_tokens: textgenTokenInfo.optional(),
+        moderations: watsonxModerationsSchema,
     })),
     model_version: z.string().nullish(),
     created_at: z.string().nullish(),
@@ -43,10 +43,10 @@ export const watsonxCompletionResponseSchema = z.object({
         stop_reason: z.string(),
         generated_token_count: z.number(),
         input_token_count: z.number(),
-        seed: z.number(),
-        generated_tokens: textgenTokenInfo,
-        input_tokens: textgenTokenInfo,
-        moderations: watsonxCommonResponseSchema,
+        seed: z.number().nullish(),
+        generated_tokens: textgenTokenInfo.optional(),
+        input_tokens: textgenTokenInfo.optional(),
+        moderations: watsonxModerationsSchema,
     })),
     usage: z.object({
         prompt_tokens: z.number(),

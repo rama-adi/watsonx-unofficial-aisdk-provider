@@ -71,11 +71,6 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
         const type = mode.type;
         const warnings: LanguageModelV1CallWarning[] = [];
 
-        // checks for unsupported params
-        if (topK !== null) warnings.push({
-            type: 'unsupported-setting',
-            setting: 'topK',
-        });
 
         if (responseFormat != null && responseFormat.type !== 'text') {
             warnings.push({
@@ -97,14 +92,28 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
             temperature,
             model_id: this.modelId,
             project_id: this.config.projectID,
-            prompt: completionPrompt,
-            frequency_penalty: frequencyPenalty,
-            max_tokens: maxTokens,
-            presence_penalty: presencePenalty,
-            top_p: topP,
-            seed,
-            time_limit: providerMetadata?.watsonx?.timeLimit,
-            stop_sequences: stop
+            input: completionPrompt,
+            parameters: {
+                frequency_penalty: frequencyPenalty,
+                max_new_tokens: maxTokens,
+                presence_penalty: presencePenalty,
+                top_p: topP,
+                random_seed: seed,
+                top_k: topK,
+                time_limit: providerMetadata?.watsonx?.timeLimit,
+                stop_sequences: stop,
+                decoding_method: this.settings.decodingMethod ?? "greedy",
+                ...(this.settings.textgenLengthPenalty !== undefined ? {
+                    length_penalty: {
+                        decay_factor: this.settings.textgenLengthPenalty.decayFactor,
+                        start_index: this.settings.textgenLengthPenalty.startIndex
+                    }
+                } : {}),
+            },
+            return_options: {
+                input_text: this.settings.returnOptions?.inputText ?? false,
+                generated_tokens: this.settings.returnOptions?.generatedTokens ?? false
+            }
         };
 
         switch (type) {

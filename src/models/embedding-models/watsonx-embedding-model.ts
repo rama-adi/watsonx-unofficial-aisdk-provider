@@ -1,11 +1,10 @@
 import {
     TooManyEmbeddingValuesForCallError,
     type EmbeddingModelV1,
-    type EmbeddingModelV1Embedding,
+
 
 } from '@ai-sdk/provider';
 import {combineHeaders, createJsonResponseHandler, postJsonToApi, type FetchFunction} from '@ai-sdk/provider-utils';
-import type {WatsonxProviderSetting} from '../../provider.ts';
 import {z} from 'zod';
 import {watsonxFailedResponseHandler} from '../../types/watsonx-response-schema.ts';
 import type {
@@ -13,7 +12,7 @@ import type {
     WatsonxEmbeddingModelId,
     WatsonxEmbeddingSetting
 } from "./watsonx-embedding-model-settings.ts";
-import {systemDetailsSchema} from "../../types/watsonx-common-response-schema.ts";
+import {systemDetailsSchema} from "../../types/watsonx-common-schema.ts";
 
 export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
     private readonly config: WatsonxEmbeddingConfig

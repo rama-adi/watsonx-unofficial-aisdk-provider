@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {watsonxCommonResponseSchema} from "../../types/watsonx-common-response-schema.ts";
+import {watsonxModerationsSchema} from "../../types/watsonx-common-schema.ts";
 import type {FetchFunction} from "@ai-sdk/provider-utils";
 
 // <autogen watsonx-completion-model-ids>
@@ -31,5 +31,17 @@ export type WatsonxCompletionConfig = {
 
 // watsonx specific settings parameters
 export interface WatsonxCompletionSetting {
-    moderations?: z.infer<typeof watsonxCommonResponseSchema>
+    moderations?: z.infer<typeof watsonxModerationsSchema>,
+    decodingMethod?: 'sample' | 'greedy',
+    returnInputText?: boolean,
+    maxNewTokens?: number,
+    minNewTokens?: number,
+    returnOptions?: {
+        inputText?: boolean,
+        generatedTokens?: boolean
+    },
+    textgenLengthPenalty?: {
+        decayFactor?: number,
+        startIndex?: number
+    }
 }

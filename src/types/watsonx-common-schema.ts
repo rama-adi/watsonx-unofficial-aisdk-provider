@@ -9,7 +9,7 @@ export const systemDetailsSchema = z.object({
     })).optional()
 }).optional();
 
-export const watsonxCommonResponseSchema = z.object({
+export const watsonxModerationsSchema = z.object({
     hap: z.object({
         input: z.object({
             enabled: z.boolean(),
@@ -34,4 +34,4 @@ export const watsonxCommonResponseSchema = z.object({
             remove_entity_value: z.boolean(),
         })
     }),
-}).nullable();
+}).optional();

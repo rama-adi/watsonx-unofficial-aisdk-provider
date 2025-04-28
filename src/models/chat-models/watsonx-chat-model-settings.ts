@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {watsonxCommonResponseSchema} from "../../types/watsonx-common-response-schema.ts";
+import {watsonxModerationsSchema} from "../../types/watsonx-common-schema.ts";
 import type {FetchFunction} from "@ai-sdk/provider-utils";
 
 // <autogen watsonx-chat-model-ids>
@@ -40,5 +40,5 @@ export type WatsonxChatConfig = {
 
 // watsonx specific settings parameters
 export interface WatsonxChatSetting {
-    moderations?: z.infer<typeof watsonxCommonResponseSchema>
+    moderations?: z.infer<typeof watsonxModerationsSchema>
 }

@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {systemDetailsSchema} from "../../types/watsonx-common-response-schema.ts";
+import {systemDetailsSchema} from "../../types/watsonx-common-schema.ts";
 
 export const watsonxChatChunkSchema = z.object({
     id: z.string().nullish(),

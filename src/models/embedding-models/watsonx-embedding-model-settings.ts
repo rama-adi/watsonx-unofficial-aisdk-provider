@@ -5,6 +5,8 @@
 // Description: All of the supported embedding models fetched from watsonx API. This only take account non-deprecated models.
 
 // Supported embedding models
+import type {FetchFunction} from "@ai-sdk/provider-utils";
+
 export type WatsonxEmbeddingModelId =
     | 'ibm/granite-3-2b-instruct'
     | 'ibm/granite-3-8b-instruct'
