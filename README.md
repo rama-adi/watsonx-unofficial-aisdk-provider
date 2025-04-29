@@ -33,7 +33,7 @@ npm install @rama-adi/watsonx-unofficial-ai-provider
 
 ## Examples
 
-I have provided some sample implementations in the `demos` folder.
+WIP
 
 ## Requirements
 

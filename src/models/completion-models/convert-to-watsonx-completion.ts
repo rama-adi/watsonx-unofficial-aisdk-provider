@@ -1,6 +1,6 @@
 import {InvalidPromptError, type LanguageModelV1Prompt, UnsupportedFunctionalityError,} from '@ai-sdk/provider';
 
-export function convertToWatsonxCompatibleCompletionPrompt(
+export function convertToWatsonxCompletion(
     {
         prompt,
         inputFormat,

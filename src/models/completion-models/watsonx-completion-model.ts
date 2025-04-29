@@ -22,7 +22,7 @@ import type {
     WatsonxCompletionModelId,
     WatsonxCompletionSetting
 } from "./watsonx-completion-model-settings.ts";
-import {convertToWatsonxCompatibleCompletionPrompt} from "./convert-to-watsonx-chat-completion.ts";
+import {convertToWatsonxCompletion} from "./convert-to-watsonx-completion.ts";
 import {watsonxCompletionChunkSchema, watsonxCompletionResponseSchema} from "./watsonx-completion-schema.ts";
 import {mapWatsonxCompletionFinishReason} from "./watsonx-completion-finish-reason.ts";
 
@@ -80,7 +80,7 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
             });
         }
 
-        const {prompt: completionPrompt, stopSequences} = convertToWatsonxCompatibleCompletionPrompt({
+        const {prompt: completionPrompt, stopSequences} = convertToWatsonxCompletion({
             prompt,
             inputFormat
         });
