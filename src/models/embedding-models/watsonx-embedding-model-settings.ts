@@ -1,12 +1,12 @@
+import type {FetchFunction} from "@ai-sdk/provider-utils";
+
 // <autogen watsonx-embedding-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-embedding-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-04-27T19:54:23.593Z
+// Generated on: 2025-04-30T13:30:26.661Z
 // Description: All of the supported embedding models fetched from watsonx API. This only take account non-deprecated models.
 
 // Supported embedding models
-import type {FetchFunction} from "@ai-sdk/provider-utils";
-
 export type WatsonxEmbeddingModelId =
     | 'ibm/granite-3-2b-instruct'
     | 'ibm/granite-3-8b-instruct'

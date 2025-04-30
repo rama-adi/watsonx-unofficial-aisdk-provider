@@ -21,7 +21,7 @@ import {
 } from "../../types/watsonx-response-schema.ts";
 import {getResponseMetadata} from "../../utils/get-response-metadata.ts";
 import {
-    functionCallingModels,
+    FunctionCallingModelLists,
     type WatsonxChatConfig,
     type WatsonxChatModelId,
     type WatsonxChatSetting
@@ -53,14 +53,14 @@ export class WatsonxChatModel implements LanguageModelV1 {
 
     private sanityCheck(options: Parameters<LanguageModelV1['doGenerate']>[0]) {
 
-        if (options.mode.type === 'regular' && options.mode.tools?.length && !functionCallingModels.includes(this.modelId as any)) {
+        if (options.mode.type === 'regular' && options.mode.tools?.length && !FunctionCallingModelLists.includes(this.modelId as any)) {
             throw new UnsupportedFunctionalityError({
                 functionality: "Tool calling",
                 message: `The model ${this.modelId} does not support tool calling`
             });
         }
 
-        if (options.mode.type === 'object-tool' && !functionCallingModels.includes(this.modelId as any)) {
+        if (options.mode.type === 'object-tool' && !FunctionCallingModelLists.includes(this.modelId as any)) {
             throw new UnsupportedFunctionalityError({
                 functionality: "Tool calling",
                 message: `The model ${this.modelId} does not support tool calling`

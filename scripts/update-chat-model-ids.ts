@@ -3,22 +3,29 @@ import {readFile, writeToFile} from "./write-to-file.ts";
 import {createCodegen} from "./create-codegen.ts";
 
 export async function updateChatModelIds(models: APIResponse) {
-    const PATH = "models/chat-models/watsonx-chat-language-model-settings.ts";
+    const PATH = "models/chat-models/watsonx-chat-model-settings.ts";
 
     const chatModel = models
         .resources
         .filter((resource) => !resource.lifecycle.some(lifecycle => lifecycle.id === "deprecated"))
         .filter((resource) => resource.functions.some(res => res.id === "text_chat"))
-        .flatMap((resource) => `    | '${resource.model_id}'`)
-        .concat("    | (string & {})")
-        .join("\n");
+        .flatMap(resource => `    '${resource.model_id}'`)
+        .join(',\n  ');
+
+    const visionModel = models
+        .resources
+        .filter((resource) => !resource.lifecycle.some(lifecycle => lifecycle.id === "deprecated"))
+        .filter((resource) => resource.functions.some(res => res.id === "image_chat"))
+        .flatMap(resource => `    '${resource.model_id}'`)
+        .join(',\n  ');
 
     const fnCallingModels = models
         .resources
         .filter((resource) => !resource.lifecycle.some(lifecycle => lifecycle.id === "deprecated"))
         .filter((resource) => resource.functions.some(res => res.id === "text_chat"))
         .filter((resource) => resource.task_ids?.includes("function_calling"))
-        .map(model => model.model_id);
+        .flatMap(resource => `    '${resource.model_id}'`)
+        .join(',\n');
 
     const oldContent = await readFile(PATH);
     const settingsAutogen = createCodegen({
@@ -29,15 +36,27 @@ export async function updateChatModelIds(models: APIResponse) {
         content: [
             "// Models here can be called from the /chat endpoint",
             "// and supports the `CoreMessage[]` type",
-            "export type WatsonxChatModelId =",
+            "export const ChatModelLists = [",
             chatModel,
-
-
+            "] as const",
             "",
 
-            "// Some chat models support function calling",
-            "export const functionCallingModels = [",
-            "  " + fnCallingModels.map(id => `    '${id}'`).join(',\n  '),
+            "// Type generated from the array",
+            "export type WatsonxChatModelId =",
+            "  | (typeof ChatModelLists[number])",
+            "  | (string & {})",
+            "",
+
+            "// Vision model",
+            "export const VisionModelLists = [",
+            visionModel,
+            "] as const",
+            "",
+
+
+            "// Function calling model",
+            "export const FunctionCallingModelLists = [",
+            fnCallingModels,
             "] as const",
         ],
         append: "\n"
