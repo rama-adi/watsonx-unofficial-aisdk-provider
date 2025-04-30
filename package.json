@@ -9,6 +9,7 @@
   "types": "./dist/index.d.ts",
   "files": ["dist/**/*", "CHANGELOG.md", "README.md", "LICENSE"],
   "scripts": {
+    "format": "biome format --write",
     "build": "tsup",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist"

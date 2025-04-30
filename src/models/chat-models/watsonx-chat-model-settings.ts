@@ -1,11 +1,11 @@
-import { z } from 'zod';
-import { watsonxModerationsSchema } from '../../types/watsonx-common-schema.ts';
+import type { z } from 'zod';
+import type { watsonxModerationsSchema } from '../../types/watsonx-common-schema.ts';
 import type { FetchFunction } from '@ai-sdk/provider-utils';
 
 // <autogen watsonx-chat-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-chat-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-04-30T13:30:26.660Z
+// Generated on: 2025-04-30T14:08:47.515Z
 // Description: All of the supported models fetched from watsonx API. This only take account non-deprecated models.
 
 // Models here can be called from the /chat endpoint
