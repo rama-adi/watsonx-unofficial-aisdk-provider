@@ -21,7 +21,7 @@ Some chat models also support **function calling**, allowing more advanced inter
 <!-- <autogen readme-chat-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-chat-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-04-27T19:54:23.594Z -->
+<!-- Generated on: 2025-04-30T13:30:26.662Z -->
 <!-- Description: Chat models tables -->
 
 | ID | Provider | Function Calling | Structured Outputs |
@@ -63,7 +63,7 @@ These embeddings are useful for tasks like **semantic search**, **text similarit
 <!-- <autogen readme-embedding-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-embedding-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-04-27T19:54:23.594Z -->
+<!-- Generated on: 2025-04-30T13:30:26.663Z -->
 <!-- Description: Embedding models tables -->
 
 | ID | Provider | Max Sequence Length | Embedding Dimensions |
@@ -106,7 +106,7 @@ generated text. *(In theory, you could do multi-turn conversation if you knew ho
 <!-- <autogen readme-completion-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-completion-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-04-27T19:54:23.595Z -->
+<!-- Generated on: 2025-04-30T13:30:26.664Z -->
 <!-- Description: Completion models tables -->
 
 | ID | Provider |
