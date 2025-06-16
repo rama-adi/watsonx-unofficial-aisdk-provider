@@ -1,6 +1,9 @@
 import type { APIResponse } from './index.ts';
 import { createCodegen } from './create-codegen.ts';
-import { readCodegenFile, writeCodegenContent } from './write-codegen-content.ts';
+import {
+  readCodegenFile,
+  writeCodegenContent,
+} from './write-codegen-content.ts';
 
 export async function updateEmbeddingModelIds(models: APIResponse) {
   const PATH = 'models/embedding-models/watsonx-embedding-model-settings.ts';

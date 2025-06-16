@@ -5,7 +5,7 @@ import type { FetchFunction } from '@ai-sdk/provider-utils';
 // <autogen watsonx-chat-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-chat-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-04-30T14:08:47.515Z
+// Generated on: 2025-06-16T17:57:41.875Z
 // Description: All of the supported models fetched from watsonx API. This only take account non-deprecated models.
 
 // Models here can be called from the /chat endpoint
@@ -16,7 +16,7 @@ export const ChatModelLists = [
   'meta-llama/llama-3-2-11b-vision-instruct',
   'meta-llama/llama-3-3-70b-instruct',
   'meta-llama/llama-guard-3-11b-vision',
-  'mistralai/mixtral-8x7b-instruct-v01',
+  'mistralai/mistral-small-3-1-24b-instruct-2503',
 ] as const;
 
 // Type generated from the array
@@ -28,6 +28,7 @@ export type WatsonxChatModelId =
 export const VisionModelLists = [
   'meta-llama/llama-3-2-11b-vision-instruct',
   'meta-llama/llama-guard-3-11b-vision',
+  'mistralai/mistral-small-3-1-24b-instruct-2503',
 ] as const;
 
 // Function calling model
@@ -36,6 +37,7 @@ export const FunctionCallingModelLists = [
   'ibm/granite-3-8b-instruct',
   'meta-llama/llama-3-2-11b-vision-instruct',
   'meta-llama/llama-3-3-70b-instruct',
+  'mistralai/mistral-small-3-1-24b-instruct-2503',
 ] as const;
 // </autogen watsonx-chat-model-ids>
 

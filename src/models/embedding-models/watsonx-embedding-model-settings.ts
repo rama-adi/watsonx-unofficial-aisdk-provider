@@ -3,7 +3,7 @@ import type { FetchFunction } from '@ai-sdk/provider-utils';
 // <autogen watsonx-embedding-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-embedding-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-04-30T14:08:47.519Z
+// Generated on: 2025-06-16T17:57:41.878Z
 // Description: All of the supported embedding models fetched from watsonx API. This only take account non-deprecated models.
 
 // Models here can be called from the /chat endpoint
@@ -14,7 +14,7 @@ export const EmbedingModelLists = [
   'meta-llama/llama-3-2-11b-vision-instruct',
   'meta-llama/llama-3-3-70b-instruct',
   'meta-llama/llama-guard-3-11b-vision',
-  'mistralai/mixtral-8x7b-instruct-v01',
+  'mistralai/mistral-small-3-1-24b-instruct-2503',
 ] as const;
 
 // Type generated from the array

@@ -1,5 +1,8 @@
 import type { APIResponse } from './index.ts';
-import { readCodegenFile, writeCodegenContent } from './write-codegen-content.ts';
+import {
+  readCodegenFile,
+  writeCodegenContent,
+} from './write-codegen-content.ts';
 import { createCodegen } from './create-codegen.ts';
 
 export async function updateSupportedModelsFile(models: APIResponse) {
