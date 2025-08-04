@@ -170,7 +170,9 @@ export class WatsonxCompletionModel implements LanguageModelV2 {
       usage: {
         inputTokens: response.usage?.prompt_tokens ?? NaN,
         outputTokens: response.usage?.completion_tokens ?? NaN,
-        totalTokens: (response.usage?.prompt_tokens ?? 0) + (response.usage?.completion_tokens ?? 0),
+        totalTokens:
+          (response.usage?.prompt_tokens ?? 0) +
+          (response.usage?.completion_tokens ?? 0),
       },
       warnings,
       request: { body: args },
@@ -256,7 +258,8 @@ export class WatsonxCompletionModel implements LanguageModelV2 {
               usage = {
                 inputTokens: value.usage.prompt_tokens,
                 outputTokens: value.usage.completion_tokens,
-                totalTokens: value.usage.prompt_tokens + value.usage.completion_tokens,
+                totalTokens:
+                  value.usage.prompt_tokens + value.usage.completion_tokens,
               };
             }
 

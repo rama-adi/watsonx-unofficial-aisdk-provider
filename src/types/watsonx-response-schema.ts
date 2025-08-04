@@ -13,7 +13,9 @@ export const watsonxErrorResponseSchema = z.object({
   status_code: z.number(),
 });
 
-export const watsonxFailedResponseHandler = createJsonErrorResponseHandler({
+export const watsonxFailedResponseHandler: ReturnType<
+  typeof createJsonErrorResponseHandler
+> = createJsonErrorResponseHandler({
   errorSchema: watsonxErrorResponseSchema,
   errorToMessage: (data) =>
     [
