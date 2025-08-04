@@ -5,6 +5,10 @@
 > at any time without notice. It is not an official product and is not supported by IBM. Use at your own risk,
 > particularly in production environments.
 
+> [!NOTE]
+> For ai sdk v4, please use the version `0.0.1-alpha.1`. `0.0.2-alpha.1` is a breaking changes
+> to support vercel ai sdk v5
+
 The **watsonx.ai provider** for the [AI SDK](https://sdk.vercel.ai/docs) makes it easy to tap into IBM’s powerful and
 diverse watsonx.ai foundation models, all through the AI SDK’s familiar, standardized interface.
 

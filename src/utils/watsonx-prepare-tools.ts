@@ -1,13 +1,17 @@
 import {
-  type LanguageModelV1,
-  type LanguageModelV1CallWarning,
+  type LanguageModelV2CallWarning,
+  type LanguageModelV2FunctionTool,
+  type LanguageModelV2ProviderDefinedTool,
   UnsupportedFunctionalityError,
 } from '@ai-sdk/provider';
 
 export function prepareTools(
-  mode: Parameters<LanguageModelV1['doGenerate']>[0]['mode'] & {
-    type: 'regular';
-  },
+  tools:
+    | Array<LanguageModelV2FunctionTool | LanguageModelV2ProviderDefinedTool>
+    | undefined,
+  toolChoice:
+    | { type: 'auto' | 'none' | 'required' | 'tool'; toolName?: string }
+    | undefined,
 ): {
   tools:
     | Array<{
@@ -26,13 +30,13 @@ export function prepareTools(
       name: string;
     };
   };
-  toolWarnings: LanguageModelV1CallWarning[];
+  toolWarnings: LanguageModelV2CallWarning[];
 } {
   // when the tools array is empty, change it to undefined to prevent errors:
-  const tools = mode.tools?.length ? mode.tools : undefined;
-  const toolWarnings: LanguageModelV1CallWarning[] = [];
+  const validTools = tools?.length ? tools : undefined;
+  const toolWarnings: LanguageModelV2CallWarning[] = [];
 
-  if (tools == null) {
+  if (validTools == null) {
     return { tools: undefined, toolWarnings };
   }
 
@@ -45,22 +49,20 @@ export function prepareTools(
     };
   }> = [];
 
-  for (const tool of tools) {
+  for (const tool of validTools) {
     if (tool.type === 'provider-defined') {
       toolWarnings.push({ type: 'unsupported-tool', tool });
-    } else {
+    } else if (tool.type === 'function') {
       watsonxTools.push({
         type: 'function',
         function: {
           name: tool.name,
           description: tool.description,
-          parameters: tool.parameters,
+          parameters: tool.inputSchema,
         },
       });
     }
   }
-
-  const toolChoice = mode.toolChoice;
 
   if (toolChoice == null) {
     return { tools: watsonxTools, toolWarnings };
@@ -91,7 +93,7 @@ export function prepareTools(
         tool_choice: {
           type: 'function',
           function: {
-            name: toolChoice.toolName,
+            name: toolChoice.toolName!,
           },
         },
         toolWarnings,

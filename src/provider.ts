@@ -1,4 +1,4 @@
-import type { EmbeddingModelV1, ProviderV1 } from '@ai-sdk/provider';
+import type { EmbeddingModelV2, ProviderV2 } from '@ai-sdk/provider';
 import {
   loadApiKey,
   loadOptionalSetting,
@@ -22,7 +22,7 @@ import type {
   WatsonxCompletionSetting,
 } from './models/completion-models/watsonx-completion-model-settings.ts';
 
-export interface WatsonxProvider extends ProviderV1 {
+export interface WatsonxProvider extends ProviderV2 {
   /*
    * Creates a new WatsonxChatLanguageModel instance with the specified model ID and optional settings.
    * This is the default function call syntax for the provider.
@@ -47,7 +47,7 @@ export interface WatsonxProvider extends ProviderV1 {
   embedding(
     modelId: WatsonxEmbeddingModelId,
     settings?: WatsonxEmbeddingSetting,
-  ): EmbeddingModelV1<string>;
+  ): EmbeddingModelV2<string>;
 
   completion(
     modelId: WatsonxCompletionModelId,
@@ -57,12 +57,12 @@ export interface WatsonxProvider extends ProviderV1 {
   textEmbeddingModel(
     modelId: WatsonxEmbeddingModelId,
     settings?: WatsonxEmbeddingSetting,
-  ): EmbeddingModelV1<string>;
+  ): EmbeddingModelV2<string>;
 
   textEmbedding(
     modelId: WatsonxEmbeddingModelId,
     settings?: WatsonxEmbeddingSetting,
-  ): EmbeddingModelV1<string>;
+  ): EmbeddingModelV2<string>;
 }
 
 export interface WatsonxProviderSetting {
@@ -220,6 +220,11 @@ export function createWatsonx(
     modelId: WatsonxCompletionModelId,
     settings?: WatsonxCompletionSetting,
   ) => createCompletionModel(modelId, settings);
+
+  // Required by ProviderV2 interface but not supported by watsonx
+  provider.imageModel = () => {
+    throw new Error('Image models are not supported by watsonx provider');
+  };
 
   return provider;
 }

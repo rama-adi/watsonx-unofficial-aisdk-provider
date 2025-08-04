@@ -1,6 +1,6 @@
 import {
   InvalidPromptError,
-  type LanguageModelV1Prompt,
+  type LanguageModelV2Prompt,
   UnsupportedFunctionalityError,
 } from '@ai-sdk/provider';
 
@@ -10,7 +10,7 @@ export function convertToWatsonxCompletion({
   user = 'user',
   assistant = 'assistant',
 }: {
-  prompt: LanguageModelV1Prompt;
+  prompt: LanguageModelV2Prompt;
   inputFormat: 'prompt' | 'messages';
   user?: string;
   assistant?: string;
@@ -54,9 +54,9 @@ export function convertToWatsonxCompletion({
               case 'text': {
                 return part.text;
               }
-              case 'image': {
+              case 'file': {
                 throw new UnsupportedFunctionalityError({
-                  functionality: 'images',
+                  functionality: 'file',
                 });
               }
             }

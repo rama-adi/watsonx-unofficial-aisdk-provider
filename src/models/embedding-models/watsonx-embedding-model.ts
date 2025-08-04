@@ -1,6 +1,6 @@
 import {
   TooManyEmbeddingValuesForCallError,
-  type EmbeddingModelV1,
+  type EmbeddingModelV2,
 } from '@ai-sdk/provider';
 import {
   combineHeaders,
@@ -16,10 +16,10 @@ import type {
 } from './watsonx-embedding-model-settings.ts';
 import { systemDetailsSchema } from '../../types/watsonx-common-schema.ts';
 
-export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
+export class WatsonxEmbeddingModel implements EmbeddingModelV2<string> {
   private readonly config: WatsonxEmbeddingConfig;
 
-  readonly specificationVersion = 'v1';
+  readonly specificationVersion = 'v2';
   readonly modelId: WatsonxEmbeddingModelId;
 
   private readonly settings: WatsonxEmbeddingSetting;
@@ -67,8 +67,8 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
     values,
     abortSignal,
     headers,
-  }: Parameters<EmbeddingModelV1<string>['doEmbed']>[0]): Promise<
-    Awaited<ReturnType<EmbeddingModelV1<string>['doEmbed']>>
+  }: Parameters<EmbeddingModelV2<string>['doEmbed']>[0]): Promise<
+    Awaited<ReturnType<EmbeddingModelV2<string>['doEmbed']>>
   > {
     if (values.length > this.maxEmbeddingsPerCall) {
       throw new TooManyEmbeddingValuesForCallError({
@@ -99,7 +99,7 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV1<string> {
       usage: {
         tokens: response.input_token_count,
       },
-      rawResponse: { headers: responseHeaders },
+      response: { headers: responseHeaders },
     };
   }
 }

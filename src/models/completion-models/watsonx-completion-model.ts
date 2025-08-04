@@ -1,9 +1,13 @@
 import {
   UnsupportedFunctionalityError,
-  type LanguageModelV1,
-  type LanguageModelV1CallWarning,
-  type LanguageModelV1FinishReason,
-  type LanguageModelV1StreamPart,
+  type LanguageModelV2,
+  type LanguageModelV2CallOptions,
+  type LanguageModelV2CallWarning,
+  type LanguageModelV2FinishReason,
+  type LanguageModelV2ResponseMetadata,
+  type LanguageModelV2StreamPart,
+  type LanguageModelV2Usage,
+  type SharedV2Headers,
 } from '@ai-sdk/provider';
 import {
   type ParseResult,
@@ -28,10 +32,12 @@ import {
 } from './watsonx-completion-schema.ts';
 import { mapWatsonxCompletionFinishReason } from './watsonx-completion-finish-reason.ts';
 
-export class WatsonxCompletionModel implements LanguageModelV1 {
-  readonly specificationVersion = 'v1';
+export class WatsonxCompletionModel implements LanguageModelV2 {
+  readonly specificationVersion = 'v2' as const;
+  readonly provider: string;
   readonly defaultObjectGenerationMode = undefined;
   readonly supportsImageUrls = false;
+  readonly supportedUrls: Record<string, RegExp[]> = {};
 
   readonly modelId: WatsonxCompletionModelId;
   readonly settings: WatsonxCompletionSetting;
@@ -45,21 +51,16 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
     this.modelId = modelId;
     this.settings = settings;
     this.config = config;
+    this.provider = config.provider;
   }
 
-  get provider(): string {
-    return this.config.provider;
-  }
-
-  private getArgs(options: Parameters<LanguageModelV1['doGenerate']>[0]): {
+  private getArgs(options: LanguageModelV2CallOptions): {
     args: any;
-    warnings: LanguageModelV1CallWarning[];
+    warnings: LanguageModelV2CallWarning[];
   } {
     const {
-      mode,
-      inputFormat,
       prompt,
-      maxTokens,
+      maxOutputTokens,
       temperature,
       topP,
       topK,
@@ -68,24 +69,22 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
       stopSequences: userStopSequences,
       responseFormat,
       seed,
-      providerMetadata,
+      providerOptions,
     } = options;
 
-    const type = mode.type;
-    const warnings: LanguageModelV1CallWarning[] = [];
+    const warnings: LanguageModelV2CallWarning[] = [];
 
     if (responseFormat != null && responseFormat.type !== 'text') {
       warnings.push({
         type: 'unsupported-setting',
         setting: 'responseFormat',
-        details: 'JSON response format is not supported.',
       });
     }
 
     const { prompt: completionPrompt, stopSequences } =
       convertToWatsonxCompletion({
         prompt,
-        inputFormat,
+        inputFormat: 'prompt',
       });
 
     const stop = [...(stopSequences ?? []), ...(userStopSequences ?? [])];
@@ -98,12 +97,12 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
       input: completionPrompt,
       parameters: {
         frequency_penalty: frequencyPenalty,
-        max_new_tokens: maxTokens,
+        max_new_tokens: maxOutputTokens,
         presence_penalty: presencePenalty,
         top_p: topP,
         random_seed: seed,
         top_k: topK,
-        time_limit: providerMetadata?.watsonx?.timeLimit,
+        time_limit: providerOptions?.watsonx?.timeLimit,
         stop_sequences: stop,
         decoding_method: this.settings.decodingMethod ?? 'greedy',
         ...(this.settings.textgenLengthPenalty !== undefined
@@ -121,43 +120,20 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
       },
     };
 
-    switch (type) {
-      case 'regular': {
-        if (mode.tools?.length) {
-          throw new UnsupportedFunctionalityError({
-            functionality: 'tools',
-          });
-        }
-
-        if (mode.toolChoice) {
-          throw new UnsupportedFunctionalityError({
-            functionality: 'toolChoice',
-          });
-        }
-
-        return { args: baseArgs, warnings };
-      }
-
-      case 'object-json': {
-        throw new UnsupportedFunctionalityError({
-          functionality: 'object-json mode',
-        });
-      }
-
-      case 'object-tool': {
-        throw new UnsupportedFunctionalityError({
-          functionality: 'object-tool mode',
-        });
-      }
-
-      default:
-        throw new Error(`Unsupported mode type: ${(mode as any).type}`);
-    }
+    return { args: baseArgs, warnings };
   }
 
-  async doGenerate(
-    options: Parameters<LanguageModelV1['doGenerate']>[0],
-  ): Promise<Awaited<ReturnType<LanguageModelV1['doGenerate']>>> {
+  async doGenerate(options: LanguageModelV2CallOptions): Promise<{
+    content: Array<{ type: 'text'; text: string }>;
+    finishReason: LanguageModelV2FinishReason;
+    usage: LanguageModelV2Usage;
+    warnings: Array<LanguageModelV2CallWarning>;
+    request?: { body?: unknown };
+    response?: LanguageModelV2ResponseMetadata & {
+      headers?: SharedV2Headers;
+      body?: unknown;
+    };
+  }> {
     const { args, warnings } = this.getArgs(options);
 
     const {
@@ -184,27 +160,38 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
     }
 
     return {
-      text: choice.generated_text,
-      usage: {
-        promptTokens: response.usage?.prompt_tokens ?? NaN,
-        completionTokens: response.usage?.completion_tokens ?? NaN,
-      },
+      content: [
+        {
+          type: 'text' as const,
+          text: choice.generated_text,
+        },
+      ],
       finishReason: mapWatsonxCompletionFinishReason(choice.stop_reason),
-      rawCall: { rawPrompt, rawSettings },
-      rawResponse: { headers: responseHeaders, body: rawResponse },
-      response: {
-        id: generateId(),
-        timestamp: new Date(response.created_at),
-        modelId: response.model_id,
+      usage: {
+        inputTokens: response.usage?.prompt_tokens ?? NaN,
+        outputTokens: response.usage?.completion_tokens ?? NaN,
+        totalTokens: (response.usage?.prompt_tokens ?? 0) + (response.usage?.completion_tokens ?? 0),
       },
       warnings,
-      request: { body: JSON.stringify(args) },
+      request: { body: args },
+      response: {
+        id: generateId(),
+        modelId: response.model_id,
+        headers: responseHeaders,
+        body: rawResponse,
+      },
     };
   }
 
-  async doStream(
-    options: Parameters<LanguageModelV1['doStream']>[0],
-  ): Promise<Awaited<ReturnType<LanguageModelV1['doStream']>>> {
+  async doStream(options: LanguageModelV2CallOptions): Promise<{
+    stream: ReadableStream<LanguageModelV2StreamPart>;
+    warnings: Array<LanguageModelV2CallWarning>;
+    request?: { body?: unknown };
+    response?: LanguageModelV2ResponseMetadata & {
+      headers?: SharedV2Headers;
+      body?: unknown;
+    };
+  }> {
     const url = `${this.config.clusterURL}/text/generation_stream?version=${this.config.version}`;
 
     const { args, warnings } = this.getArgs(options);
@@ -226,12 +213,11 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
       fetch: this.config.fetch,
     });
 
-    const { messages: rawPrompt, ...rawSettings } = args;
-
-    let finishReason: LanguageModelV1FinishReason = 'unknown';
-    let usage: { promptTokens: number; completionTokens: number } = {
-      promptTokens: Number.NaN,
-      completionTokens: Number.NaN,
+    let finishReason: LanguageModelV2FinishReason = 'other';
+    let usage: LanguageModelV2Usage = {
+      inputTokens: Number.NaN,
+      outputTokens: Number.NaN,
+      totalTokens: Number.NaN,
     };
     let isFirstChunk = true;
 
@@ -239,7 +225,7 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
       stream: response.pipeThrough(
         new TransformStream<
           ParseResult<z.infer<typeof watsonxCompletionChunkSchema>>,
-          LanguageModelV1StreamPart
+          LanguageModelV2StreamPart
         >({
           transform(chunk, controller) {
             // handle failed chunk parsing / validation:
@@ -268,8 +254,9 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
 
             if (value.usage != null) {
               usage = {
-                promptTokens: value.usage.prompt_tokens,
-                completionTokens: value.usage.completion_tokens,
+                inputTokens: value.usage.prompt_tokens,
+                outputTokens: value.usage.completion_tokens,
+                totalTokens: value.usage.prompt_tokens + value.usage.completion_tokens,
               };
             }
 
@@ -284,7 +271,8 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
             if (choice?.generated_text != null) {
               controller.enqueue({
                 type: 'text-delta',
-                textDelta: choice.generated_text,
+                id: generateId(),
+                delta: choice.generated_text,
               });
             }
           },
@@ -298,10 +286,9 @@ export class WatsonxCompletionModel implements LanguageModelV1 {
           },
         }),
       ),
-      rawCall: { rawPrompt, rawSettings },
-      rawResponse: { headers: responseHeaders },
       warnings,
-      request: { body: JSON.stringify(body) },
+      request: { body },
+      response: { headers: responseHeaders },
     };
   }
 }

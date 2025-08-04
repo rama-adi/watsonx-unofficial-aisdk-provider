@@ -1,12 +1,12 @@
 import {
-  type LanguageModelV1Prompt,
+  type LanguageModelV2Prompt,
   UnsupportedFunctionalityError,
 } from '@ai-sdk/provider';
 import { convertUint8ArrayToBase64 } from '@ai-sdk/provider-utils';
 import type { WatsonxPrompt } from './watsonx-chat-prompt.ts';
 
 export function convertToWatsonxChatMessages(
-  prompt: LanguageModelV1Prompt,
+  prompt: LanguageModelV2Prompt,
 ): WatsonxPrompt {
   const messages: WatsonxPrompt = [];
 
@@ -28,25 +28,29 @@ export function convertToWatsonxChatMessages(
               case 'text': {
                 return { type: 'text', text: part.text };
               }
-              case 'image': {
-                return {
-                  type: 'image_url',
-                  image_url:
-                    part.image instanceof URL
-                      ? part.image.toString()
-                      : `data:${
-                          part.mimeType ?? 'image/jpeg'
-                        };base64,${convertUint8ArrayToBase64(part.image)}`,
-                };
-              }
               case 'file': {
+                if (part.mediaType.startsWith('image/')) {
+                  return {
+                    type: 'image_url',
+                    image_url:
+                      part.data instanceof URL
+                        ? part.data.toString()
+                        : `data:${part.mediaType};base64,${
+                            typeof part.data === 'string'
+                              ? part.data
+                              : convertUint8ArrayToBase64(part.data)
+                          }`,
+                  };
+                }
+
                 if (!(part.data instanceof URL)) {
                   throw new UnsupportedFunctionalityError({
-                    functionality: 'File content parts in user messages',
+                    functionality:
+                      'File content parts in user messages (only URLs supported for non-image files)',
                   });
                 }
 
-                switch (part.mimeType) {
+                switch (part.mediaType) {
                   case 'application/pdf': {
                     return {
                       type: 'image_url',
@@ -95,7 +99,10 @@ export function convertToWatsonxChatMessages(
                 type: 'function',
                 function: {
                   name: part.toolName,
-                  arguments: JSON.stringify(part.args),
+                  arguments:
+                    typeof part.input === 'string'
+                      ? part.input
+                      : JSON.stringify(part.input),
                 },
               });
               break;
@@ -114,10 +121,26 @@ export function convertToWatsonxChatMessages(
       }
       case 'tool': {
         for (const toolResponse of content) {
+          let resultContent = '';
+
+          switch (toolResponse.output.type) {
+            case 'text':
+            case 'error-text':
+              resultContent = toolResponse.output.value;
+              break;
+            case 'json':
+            case 'error-json':
+              resultContent = JSON.stringify(toolResponse.output.value);
+              break;
+            case 'content':
+              resultContent = JSON.stringify(toolResponse.output.value);
+              break;
+          }
+
           messages.push({
             role: 'tool',
             name: toolResponse.toolName,
-            content: JSON.stringify(toolResponse.result),
+            content: resultContent,
             tool_call_id: toolResponse.toolCallId,
           });
         }

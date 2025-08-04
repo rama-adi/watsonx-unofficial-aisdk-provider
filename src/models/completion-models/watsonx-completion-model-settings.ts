@@ -5,16 +5,12 @@ import type { FetchFunction } from '@ai-sdk/provider-utils';
 // <autogen watsonx-completion-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-completion-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-06-16T17:57:41.883Z
+// Generated on: 2025-08-04T08:56:35.660Z
 // Description: All of the supported completion models fetched from watsonx API. This only take account non-deprecated models.
 
 // Models here can be called from the /chat endpoint
 // and supports the `CoreMessage[]` type
-export const CompletionModelLists = [
-  'elyza/elyza-japanese-llama-2-7b-instruct',
-  'google/flan-t5-xl',
-  'ibm/granite-13b-instruct-v2',
-] as const;
+export const CompletionModelLists = [] as const;
 
 // Type generated from the array
 export type WatsonxCompletionModelId =

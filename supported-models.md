@@ -21,7 +21,7 @@ Some chat models also support **function calling**, allowing more advanced inter
 <!-- <autogen readme-chat-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-chat-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-06-16T17:57:41.879Z -->
+<!-- Generated on: 2025-08-04T08:56:35.656Z -->
 <!-- Description: Chat models tables -->
 
 | ID | Provider | Function Calling | Structured Outputs |
@@ -30,7 +30,9 @@ Some chat models also support **function calling**, allowing more advanced inter
 | `ibm/granite-3-8b-instruct` | IBM | ✅ | ✅ |
 | `meta-llama/llama-3-2-11b-vision-instruct` | Meta | ✅ | ✅ |
 | `meta-llama/llama-3-3-70b-instruct` | Meta | ✅ | ✅ |
+| `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | Meta | ✅ | ✅ |
 | `meta-llama/llama-guard-3-11b-vision` | Meta | ❌ | ❌ |
+| `mistralai/mistral-medium-2505` | Mistral AI | ✅ | ✅ |
 | `mistralai/mistral-small-3-1-24b-instruct-2503` | Mistral AI | ✅ | ✅ |
 <!-- </autogen readme-chat-models> -->
 
@@ -63,7 +65,7 @@ These embeddings are useful for tasks like **semantic search**, **text similarit
 <!-- <autogen readme-embedding-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-embedding-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-06-16T17:57:41.880Z -->
+<!-- Generated on: 2025-08-04T08:56:35.658Z -->
 <!-- Description: Embedding models tables -->
 
 | ID | Provider | Max Sequence Length | Embedding Dimensions |
@@ -106,14 +108,12 @@ generated text. *(In theory, you could do multi-turn conversation if you knew ho
 <!-- <autogen readme-completion-models> -->
 <!-- ⚠️ WARNING: This section that is marked by the autogen ID of readme-completion-models (top and bottom) is auto-generated. -->
 <!-- Do not edit manually. -->
-<!-- Generated on: 2025-06-16T17:57:41.881Z -->
+<!-- Generated on: 2025-08-04T08:56:35.658Z -->
 <!-- Description: Completion models tables -->
 
 | ID | Provider |
 |----|----------|
-| `elyza/elyza-japanese-llama-2-7b-instruct` | ELYZA |
-| `google/flan-t5-xl` | Google |
-| `ibm/granite-13b-instruct-v2` | IBM |
+
 <!-- </autogen readme-completion-models> -->
 
 ### Usage Example
