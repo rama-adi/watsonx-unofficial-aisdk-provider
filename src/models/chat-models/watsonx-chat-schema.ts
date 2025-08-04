@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { systemDetailsSchema } from '../../types/watsonx-common-schema.ts';
 
 export const watsonxChatChunkSchema = z.object({

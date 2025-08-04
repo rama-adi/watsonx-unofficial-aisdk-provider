@@ -1,4 +1,4 @@
-import type { z } from 'zod';
+import type { z } from 'zod/v4';
 import type { watsonxModerationsSchema } from '../../types/watsonx-common-schema.ts';
 import type { FetchFunction } from '@ai-sdk/provider-utils';
 

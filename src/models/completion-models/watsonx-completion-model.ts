@@ -17,7 +17,7 @@ import {
   postJsonToApi,
   generateId,
 } from '@ai-sdk/provider-utils';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { watsonxFailedResponseHandler } from '../../types/watsonx-response-schema.ts';
 import { getResponseMetadata } from '../../utils/get-response-metadata.ts';
 import type {

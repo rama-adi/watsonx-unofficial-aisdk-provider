@@ -7,7 +7,7 @@ import {
   createJsonResponseHandler,
   postJsonToApi,
 } from '@ai-sdk/provider-utils';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { watsonxFailedResponseHandler } from '../../types/watsonx-response-schema.ts';
 import type {
   WatsonxEmbeddingConfig,

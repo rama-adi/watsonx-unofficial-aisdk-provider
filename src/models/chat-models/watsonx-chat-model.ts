@@ -20,7 +20,7 @@ import {
   isParsableJson,
   postJsonToApi,
 } from '@ai-sdk/provider-utils';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { mapWatsonxChatFinishReason } from './watsonx-chat-finish-reason.ts';
 import { convertToWatsonxChatMessages } from './convert-to-watsonx-chat-messages.ts';
 import { watsonxFailedResponseHandler } from '../../types/watsonx-response-schema.ts';
