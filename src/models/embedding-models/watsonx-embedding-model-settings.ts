@@ -3,7 +3,7 @@ import type { FetchFunction } from '@ai-sdk/provider-utils';
 // <autogen watsonx-embedding-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-embedding-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-08-04T08:56:35.655Z
+// Generated on: 2025-08-08T01:02:47.901Z
 // Description: All of the supported embedding models fetched from watsonx API. This only take account non-deprecated models.
 
 // Models here can be called from the /chat endpoint

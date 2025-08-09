@@ -7,12 +7,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**/*",
-    "CHANGELOG.md",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["dist/**/*", "CHANGELOG.md", "README.md", "LICENSE"],
   "scripts": {
     "format": "biome format --write",
     "build": "tsup",
@@ -63,12 +58,5 @@
   "bugs": {
     "url": "https://github.com/rama-adi/watsonx-unofficial-aisdk-provider/issues"
   },
-  "keywords": [
-    "ai",
-    "ibm",
-    "watsonx",
-    "vercel-ai",
-    "ai-sdk",
-    "llm"
-  ]
+  "keywords": ["ai", "ibm", "watsonx", "vercel-ai", "ai-sdk", "llm"]
 }

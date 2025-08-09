@@ -5,7 +5,7 @@ import type { FetchFunction } from '@ai-sdk/provider-utils';
 // <autogen watsonx-completion-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-completion-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-08-04T08:56:35.660Z
+// Generated on: 2025-08-08T01:02:47.903Z
 // Description: All of the supported completion models fetched from watsonx API. This only take account non-deprecated models.
 
 // Models here can be called from the /chat endpoint
