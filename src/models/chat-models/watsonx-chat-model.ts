@@ -94,24 +94,42 @@ export class WatsonxChatModel implements LanguageModelV2 {
       });
     }
 
-    if (stopSequences != null) {
-      warnings.push({
-        type: 'unsupported-setting',
-        setting: 'stopSequences',
-      });
-    }
+    // map framework stopSequences to API 'stop'
 
     const baseArgs = {
       temperature,
       model_id: this.modelId,
       project_id: this.config.projectID,
       frequency_penalty: frequencyPenalty,
-      max_tokens: maxOutputTokens,
+      // IBM watsonx prefers max_completion_tokens; max_tokens is deprecated
+      ...(maxOutputTokens != null
+        ? { max_completion_tokens: maxOutputTokens }
+        : {}),
       presence_penalty: presencePenalty,
       top_p: topP,
       seed,
       messages: convertToWatsonxChatMessages(prompt),
       time_limit: providerOptions?.watsonx?.timeLimit,
+      // OpenAPI optional parameters supported via providerOptions.watsonx
+      ...(providerOptions?.watsonx?.maxCompletionTokens != null
+        ? { max_completion_tokens: providerOptions.watsonx.maxCompletionTokens }
+        : {}),
+      ...(providerOptions?.watsonx?.logprobs != null
+        ? { logprobs: providerOptions.watsonx.logprobs }
+        : {}),
+      ...(providerOptions?.watsonx?.topLogprobs != null
+        ? { top_logprobs: providerOptions.watsonx.topLogprobs }
+        : {}),
+      ...(providerOptions?.watsonx?.logitBias != null
+        ? { logit_bias: providerOptions.watsonx.logitBias }
+        : {}),
+      ...(providerOptions?.watsonx?.n != null
+        ? { n: providerOptions.watsonx.n }
+        : {}),
+      ...(providerOptions?.watsonx?.spaceId != null
+        ? { space_id: providerOptions.watsonx.spaceId }
+        : {}),
+      ...(stopSequences != null ? { stop: stopSequences } : {}),
     };
 
     if (responseFormat?.type === 'json') {
@@ -255,7 +273,7 @@ export class WatsonxChatModel implements LanguageModelV2 {
     const { args, warnings } = this.getArgs(options);
     const url = `${this.config.clusterURL}/text/chat_stream?version=${this.config.version}`;
 
-    const body = { ...args, stream: true };
+    const body = { ...args };
 
     const { value: response, responseHeaders } = await postJsonToApi({
       url,

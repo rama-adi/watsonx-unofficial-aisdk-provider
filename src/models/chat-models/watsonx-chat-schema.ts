@@ -13,7 +13,7 @@ export const watsonxChatChunkSchema = z.object({
         tool_calls: z
           .array(
             z.object({
-              index: z.number().optional(),
+              index: z.number(),
               id: z.string().optional(),
               type: z.literal('function').nullish(),
               function: z.object({

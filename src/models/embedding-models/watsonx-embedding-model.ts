@@ -50,14 +50,16 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV2<string> {
 
   #WatsonxTextEmbeddingResponseSchema = z.object({
     model_id: z.string(),
-    results: z.object({
-      embedding: z.array(z.number()),
-      input: z
-        .object({
-          text: z.string(),
-        })
-        .nullish(),
-    }),
+    results: z.array(
+      z.object({
+        embedding: z.array(z.number()),
+        input: z
+          .object({
+            text: z.string(),
+          })
+          .nullish(),
+      }),
+    ),
     created_at: z.string(),
     input_token_count: z.number(),
     system: systemDetailsSchema,
@@ -83,9 +85,23 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV2<string> {
       url: `${this.config.clusterURL}/text/embeddings?version=${this.config.version}`,
       headers: combineHeaders(this.config.headers(), headers),
       body: {
-        model: this.modelId,
-        input: values,
+        model_id: this.modelId,
+        project_id: this.config.projectID,
+        inputs: values,
         encoding_format: 'float',
+        ...(this.settings.truncate_input_tokens != null ||
+        this.settings.return_options != null
+          ? {
+              parameters: {
+                ...(this.settings.truncate_input_tokens != null
+                  ? { truncate_input_tokens: this.settings.truncate_input_tokens }
+                  : {}),
+                ...(this.settings.return_options != null
+                  ? { return_options: this.settings.return_options }
+                  : {}),
+              },
+            }
+          : {}),
       },
       failedResponseHandler: watsonxFailedResponseHandler,
       successfulResponseHandler: createJsonResponseHandler(
@@ -95,7 +111,7 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV2<string> {
       fetch: this.config.fetch,
     });
     return {
-      embeddings: response.results.embedding.map((embedding) => [embedding]),
+      embeddings: response.results.map((r) => r.embedding),
       usage: {
         tokens: response.input_token_count,
       },

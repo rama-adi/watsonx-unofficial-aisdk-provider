@@ -19,6 +19,7 @@ const textgenTokenInfo = z.array(
 );
 
 export const watsonxCompletionChunkSchema = z.object({
+  id: z.string().nullish(),
   model_id: z.string().nullish(),
   created: z.number().nullish(),
   results: z.array(
@@ -46,6 +47,7 @@ export const watsonxCompletionChunkSchema = z.object({
 });
 
 export const watsonxCompletionResponseSchema = z.object({
+  id: z.string().nullish(),
   model_id: z.string(),
   model_version: z.string().nullish(),
   created_at: z.string(),

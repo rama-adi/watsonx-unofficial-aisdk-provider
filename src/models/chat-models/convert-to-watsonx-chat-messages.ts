@@ -29,49 +29,11 @@ export function convertToWatsonxChatMessages(
                 return { type: 'text', text: part.text };
               }
               case 'file': {
-                if (part.mediaType.startsWith('image/')) {
-                  return {
-                    type: 'image_url',
-                    image_url:
-                      part.data instanceof URL
-                        ? part.data.toString()
-                        : `data:${part.mediaType};base64,${
-                            typeof part.data === 'string'
-                              ? part.data
-                              : convertUint8ArrayToBase64(part.data)
-                          }`,
-                  };
-                }
-
-                if (!(part.data instanceof URL)) {
-                  throw new UnsupportedFunctionalityError({
-                    functionality:
-                      'File content parts in user messages (only URLs supported for non-image files)',
-                  });
-                }
-
-                switch (part.mediaType) {
-                  case 'application/pdf': {
-                    return {
-                      type: 'image_url',
-                      image_url: part.data.toString(),
-                    };
-                  }
-                  case 'video/mp4':
-                  case 'video/webm':
-                  case 'video/ogg': {
-                    return {
-                      type: 'video_url',
-                      video_url: part.data.toString(),
-                    };
-                  }
-                  default: {
-                    throw new UnsupportedFunctionalityError({
-                      functionality:
-                        'Only PDF and video files are supported in user messages',
-                    });
-                  }
-                }
+                // watsonx text chat does not document image/video URL parts; reject files
+                throw new UnsupportedFunctionalityError({
+                  functionality:
+                    'File content in user messages is not supported by watsonx text chat',
+                });
               }
             }
           }),
@@ -113,7 +75,6 @@ export function convertToWatsonxChatMessages(
         messages.push({
           role: 'assistant',
           content: text,
-          prefix: isLastMessage ? true : undefined,
           tool_calls: toolCalls.length > 0 ? toolCalls : undefined,
         });
 
@@ -139,7 +100,6 @@ export function convertToWatsonxChatMessages(
 
           messages.push({
             role: 'tool',
-            name: toolResponse.toolName,
             content: resultContent,
             tool_call_id: toolResponse.toolCallId,
           });

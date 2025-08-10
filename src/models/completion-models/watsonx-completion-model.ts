@@ -91,20 +91,24 @@ export class WatsonxCompletionModel implements LanguageModelV2 {
 
     // Reconstruct body to map with what watsonx expects
     const baseArgs: any = {
-      temperature,
       model_id: this.modelId,
       project_id: this.config.projectID,
       input: completionPrompt,
       parameters: {
-        frequency_penalty: frequencyPenalty,
-        max_new_tokens: maxOutputTokens,
-        presence_penalty: presencePenalty,
-        top_p: topP,
-        random_seed: seed,
-        top_k: topK,
-        time_limit: providerOptions?.watsonx?.timeLimit,
-        stop_sequences: stop,
+        // sampling & decoding
         decoding_method: this.settings.decodingMethod ?? 'greedy',
+        temperature,
+        top_p: topP,
+        top_k: topK,
+        // penalties and limits
+        frequency_penalty: frequencyPenalty,
+        presence_penalty: presencePenalty,
+        max_new_tokens: maxOutputTokens ?? this.settings.maxNewTokens,
+        min_new_tokens: this.settings.minNewTokens,
+        // control & misc
+        stop_sequences: stop,
+        random_seed: seed,
+        time_limit: providerOptions?.watsonx?.timeLimit,
         ...(this.settings.textgenLengthPenalty !== undefined
           ? {
               length_penalty: {
@@ -250,7 +254,12 @@ export class WatsonxCompletionModel implements LanguageModelV2 {
               isFirstChunk = false;
               controller.enqueue({
                 type: 'response-metadata',
-                ...getResponseMetadata(value),
+                id: value.id ?? generateId(),
+                modelId: value.model_id ?? undefined,
+                timestamp:
+                  value.created != null
+                    ? new Date(value.created * 1000)
+                    : undefined,
               });
             }
 
