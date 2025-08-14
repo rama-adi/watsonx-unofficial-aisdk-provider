@@ -1,5 +1,14 @@
 import { z } from 'zod/v4';
 
+// Common types shared across watsonx provider
+export type WatsonxCluster =
+  | 'ca-tor'
+  | 'jp-tok'
+  | 'eu-gb'
+  | 'eu-de'
+  | 'us-south'
+  | 'au-syd';
+
 export const systemDetailsSchema = z
   .object({
     warnings: z

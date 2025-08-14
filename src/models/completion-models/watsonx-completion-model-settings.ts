@@ -1,5 +1,8 @@
 import type { z } from 'zod/v4';
-import type { watsonxModerationsSchema } from '../../types/watsonx-common-schema.ts';
+import type {
+  WatsonxCluster,
+  watsonxModerationsSchema,
+} from '../../types/watsonx-common-schema.ts';
 import type { FetchFunction } from '@ai-sdk/provider-utils';
 
 // <autogen watsonx-completion-model-ids>
@@ -24,6 +27,11 @@ export type WatsonxCompletionRegion = keyof typeof CompletionModelLists;
 // Type generated from the object
 export type WatsonxCompletionModelId =
   | (typeof CompletionModelLists)[WatsonxCompletionRegion][number]
+  | (string & {});
+
+// Region-specific helper type for IDE hinting based on chosen cluster
+export type WatsonxCompletionModelIdFor<C extends WatsonxCluster> =
+  | (typeof CompletionModelLists)[C][number]
   | (string & {});
 
 // </autogen watsonx-completion-model-ids>

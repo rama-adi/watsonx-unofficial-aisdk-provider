@@ -1,4 +1,5 @@
 import type { FetchFunction } from '@ai-sdk/provider-utils';
+import type { WatsonxCluster } from '../../types/watsonx-common-schema.ts';
 
 // <autogen watsonx-embedding-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-embedding-model-ids (top and bottom) is auto-generated.
@@ -55,6 +56,11 @@ export type WatsonxEmbeddingRegion = keyof typeof EmbedingModelLists;
 // Type generated from the object
 export type WatsonxEmbeddingModelId =
   | (typeof EmbedingModelLists)[WatsonxEmbeddingRegion][number]
+  | (string & {});
+
+// Region-specific helper type for IDE hinting based on chosen cluster
+export type WatsonxEmbeddingModelIdFor<C extends WatsonxCluster> =
+  | (typeof EmbedingModelLists)[C][number]
   | (string & {});
 
 // </autogen watsonx-embedding-model-ids>

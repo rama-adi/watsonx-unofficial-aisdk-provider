@@ -10,25 +10,30 @@ import { WatsonxChatModel } from './models/chat-models/watsonx-chat-model.ts';
 import { WatsonxEmbeddingModel } from './models/embedding-models/watsonx-embedding-model.ts';
 import type {
   WatsonxEmbeddingModelId,
+  WatsonxEmbeddingModelIdFor,
   WatsonxEmbeddingSetting,
 } from './models/embedding-models/watsonx-embedding-model-settings.ts';
 import type {
   WatsonxChatModelId,
+  WatsonxChatModelIdFor,
   WatsonxChatSetting,
 } from './models/chat-models/watsonx-chat-model-settings.ts';
 import { WatsonxCompletionModel } from './models/completion-models/watsonx-completion-model.ts';
 import type {
   WatsonxCompletionModelId,
+  WatsonxCompletionModelIdFor,
   WatsonxCompletionSetting,
 } from './models/completion-models/watsonx-completion-model-settings.ts';
+import type { WatsonxCluster } from './types/watsonx-common-schema.ts';
 
-export interface WatsonxProvider extends ProviderV2 {
+export interface WatsonxProvider<C extends WatsonxCluster = WatsonxCluster>
+  extends ProviderV2 {
   /*
    * Creates a new WatsonxChatLanguageModel instance with the specified model ID and optional settings.
    * This is the default function call syntax for the provider.
    */
   (
-    modelId: WatsonxChatModelId,
+    modelId: WatsonxChatModelIdFor<C>,
     settings?: WatsonxChatSetting,
   ): WatsonxChatModel;
 
@@ -37,7 +42,7 @@ export interface WatsonxProvider extends ProviderV2 {
    * This is equivalent to calling the provider directly.
    */
   languageModel(
-    modelId: WatsonxChatModelId,
+    modelId: WatsonxChatModelIdFor<C>,
     settings?: WatsonxChatSetting,
   ): WatsonxChatModel;
 
@@ -45,27 +50,27 @@ export interface WatsonxProvider extends ProviderV2 {
    * Creates a new WatsonxEmbeddingModel instance with the specified model ID and optional settings.
    */
   embedding(
-    modelId: WatsonxEmbeddingModelId,
+    modelId: WatsonxEmbeddingModelIdFor<C>,
     settings?: WatsonxEmbeddingSetting,
   ): EmbeddingModelV2<string>;
 
   completion(
-    modelId: WatsonxCompletionModelId,
+    modelId: WatsonxCompletionModelIdFor<C>,
     settings?: WatsonxCompletionSetting,
   ): WatsonxCompletionModel;
 
   textEmbeddingModel(
-    modelId: WatsonxEmbeddingModelId,
+    modelId: WatsonxEmbeddingModelIdFor<C>,
     settings?: WatsonxEmbeddingSetting,
   ): EmbeddingModelV2<string>;
 
   textEmbedding(
-    modelId: WatsonxEmbeddingModelId,
+    modelId: WatsonxEmbeddingModelIdFor<C>,
     settings?: WatsonxEmbeddingSetting,
   ): EmbeddingModelV2<string>;
 }
 
-export interface WatsonxProviderSetting {
+export interface WatsonxProviderSetting<C extends WatsonxCluster = WatsonxCluster> {
   /**
      The cluster which you host your watsonx AI project
 
@@ -73,7 +78,7 @@ export interface WatsonxProviderSetting {
 
      Of course, you can always override it in clusterURL
      */
-  cluster?: 'ca-tor' | 'jp-tok' | 'eu-gb' | 'eu-de' | 'us-south' | 'au-syd';
+  cluster?: C;
 
   /**
      The Project ID that hosts your watsonx model
@@ -114,9 +119,9 @@ export interface WatsonxProviderSetting {
   fetch?: FetchFunction;
 }
 
-export function createWatsonx(
-  options: WatsonxProviderSetting = {},
-): WatsonxProvider {
+export function createWatsonx<C extends WatsonxCluster = WatsonxCluster>(
+  options: WatsonxProviderSetting<C> = {},
+): WatsonxProvider<C> {
   const clusterURL =
     loadOptionalSetting({
       settingValue: options.clusterURL,
@@ -188,7 +193,7 @@ export function createWatsonx(
     });
 
   const provider = function (
-    modelId: WatsonxChatModelId,
+    modelId: WatsonxChatModelIdFor<C>,
     settings?: WatsonxChatSetting,
   ) {
     if (new.target) {
@@ -201,23 +206,23 @@ export function createWatsonx(
   };
 
   provider.languageModel = (
-    modelId: WatsonxEmbeddingModelId,
+    modelId: WatsonxChatModelIdFor<C>,
     settings?: WatsonxChatSetting,
   ) => createChatModel(modelId, settings);
   provider.embedding = (
-    modelId: WatsonxEmbeddingModelId,
+    modelId: WatsonxEmbeddingModelIdFor<C>,
     settings?: WatsonxEmbeddingSetting,
   ) => createEmbeddingModel(modelId, settings);
   provider.textEmbeddingModel = (
-    modelId: WatsonxEmbeddingModelId,
+    modelId: WatsonxEmbeddingModelIdFor<C>,
     settings?: WatsonxEmbeddingSetting,
   ) => createEmbeddingModel(modelId, settings);
   provider.textEmbedding = (
-    modelId: WatsonxEmbeddingModelId,
+    modelId: WatsonxEmbeddingModelIdFor<C>,
     settings?: WatsonxEmbeddingSetting,
   ) => createEmbeddingModel(modelId, settings);
   provider.completion = (
-    modelId: WatsonxCompletionModelId,
+    modelId: WatsonxCompletionModelIdFor<C>,
     settings?: WatsonxCompletionSetting,
   ) => createCompletionModel(modelId, settings);
 
@@ -226,7 +231,7 @@ export function createWatsonx(
     throw new Error('Image models are not supported by watsonx provider');
   };
 
-  return provider;
+  return provider as unknown as WatsonxProvider<C>;
 }
 
 export const watsonx = createWatsonx();

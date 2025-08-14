@@ -1,5 +1,8 @@
 import type { z } from 'zod/v4';
-import type { watsonxModerationsSchema } from '../../types/watsonx-common-schema.ts';
+import type {
+  WatsonxCluster,
+  watsonxModerationsSchema,
+} from '../../types/watsonx-common-schema.ts';
 import type { FetchFunction } from '@ai-sdk/provider-utils';
 
 // <autogen watsonx-chat-model-ids>
@@ -68,6 +71,11 @@ export type WatsonxChatRegion = keyof typeof ChatModelLists;
 // Type generated from the object
 export type WatsonxChatModelId =
   | (typeof ChatModelLists)[WatsonxChatRegion][number]
+  | (string & {});
+
+// Region-specific helper type for IDE hinting based on chosen cluster
+export type WatsonxChatModelIdFor<C extends WatsonxCluster> =
+  | (typeof ChatModelLists)[C][number]
   | (string & {});
 
 // Vision model
