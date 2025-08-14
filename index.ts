@@ -2,6 +2,7 @@
 export { createWatsonx, watsonx } from './src/provider';
 export type { WatsonxProvider, WatsonxProviderSetting } from './src/provider';
 export type { WatsonxCluster } from './src/types/watsonx-common-schema';
+export { WatsonxClusters } from './src/types/watsonx-common-schema';
 
 // Chat model lists
 export {
