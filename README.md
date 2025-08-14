@@ -8,7 +8,7 @@ Run Granite, Llama, and more with a clean, minimal setup—no custom clients req
 > Experimental and community-maintained. Not an official IBM product. APIs can change without notice.
 
 > [!NOTE]
-> On AI SDK v4? Install `0.0.1-alpha.1`. Version `0.0.2-alpha.1` targets AI SDK v5 (`ProviderV2`) and is breaking.
+> On AI SDK v4? Install `0.0.1-alpha.1`. Version `^0.0.2-alpha.1` targets AI SDK v5 (`ProviderV2`) and is breaking.
 
 ## Why use this?
 

@@ -1,5 +1,18 @@
 # @rama-adi/watsonx-unofficial-ai-provider
 
+## 0.0.2-alpha.2
+
+### Features
+- Cluster-aware model type hints: Introduced `WatsonxCluster` and region-specific helper types (`WatsonxChatModelIdFor<C>`, `WatsonxEmbeddingModelIdFor<C>`, `WatsonxCompletionModelIdFor<C>`). When you initialize with a literal `cluster`, IDE autocompletion now suggests only models available in that region while still allowing arbitrary strings.
+
+### Improvements
+- Provider generics and overloads: `createWatsonx` and `WatsonxProvider` are now generic over cluster, narrowing model IDs across `languageModel`, `embedding`, `textEmbeddingModel`, `textEmbedding`, and `completion`.
+- Re-exported new types from `index.ts` for easier consumption.
+- Backwards compatible: No runtime changes; types default to all regions when the cluster is not a literal.
+
+### Bug Fixes
+- Corrected `languageModel` parameter type to use chat model IDs.
+
 ## 0.0.2-alpha.1
 
 ### Breaking Changes
