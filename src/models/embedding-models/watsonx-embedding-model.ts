@@ -94,7 +94,10 @@ export class WatsonxEmbeddingModel implements EmbeddingModelV2<string> {
           ? {
               parameters: {
                 ...(this.settings.truncate_input_tokens != null
-                  ? { truncate_input_tokens: this.settings.truncate_input_tokens }
+                  ? {
+                      truncate_input_tokens:
+                        this.settings.truncate_input_tokens,
+                    }
                   : {}),
                 ...(this.settings.return_options != null
                   ? { return_options: this.settings.return_options }

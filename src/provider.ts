@@ -228,3 +228,5 @@ export function createWatsonx(
 
   return provider;
 }
+
+export const watsonx = createWatsonx();

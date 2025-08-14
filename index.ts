@@ -1,5 +1,5 @@
 // Base provider
-export { createWatsonx } from './src/provider';
+export { createWatsonx, watsonx } from './src/provider';
 export type { WatsonxProvider, WatsonxProviderSetting } from './src/provider';
 
 // Chat model lists

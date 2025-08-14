@@ -239,15 +239,29 @@ namespace RESPONSE {
 export type APIResponse = RESPONSE.Root;
 
 async function main() {
-  const result = await fetch(
-    'https://jp-tok.ml.cloud.ibm.com/ml/v1/foundation_model_specs?version=2024-10-10',
-  );
-  const response = (await result.json()) as APIResponse;
+  const REGIONS = ['ca-tor', 'jp-tok', 'eu-gb', 'eu-de', 'us-south', 'au-syd'];
 
-  await updateChatModelIds(response);
-  await updateEmbeddingModelIds(response);
-  await updateSupportedModelsFile(response);
-  await updateCompletionModelIds(response);
+  const regionResponses: Record<string, APIResponse> = {};
+
+  const regionPromises = REGIONS.map(async (region) => {
+    const result = await fetch(
+      `https://${region}.ml.cloud.ibm.com/ml/v1/foundation_model_specs?version=2024-10-10`,
+    );
+
+    const response = (await result.json()) as APIResponse;
+    return { region, response };
+  });
+
+  const regionResults = await Promise.all(regionPromises);
+
+  for (const { region, response } of regionResults) {
+    regionResponses[region] = response;
+  }
+
+  await updateChatModelIds(regionResponses);
+  await updateEmbeddingModelIds(regionResponses);
+  await updateSupportedModelsFile(regionResponses);
+  await updateCompletionModelIds(regionResponses);
 
   // Run formatting script after all updates are complete
   const { execSync } = require('child_process');

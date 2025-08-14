@@ -60,7 +60,9 @@ export class WatsonxChatModel implements LanguageModelV2 {
   private sanityCheck(options: LanguageModelV2CallOptions) {
     if (
       options.tools?.length &&
-      !FunctionCallingModelLists.includes(this.modelId as any)
+      !Object.values(FunctionCallingModelLists).some((models) =>
+        (models as readonly string[]).includes(this.modelId as any),
+      )
     ) {
       throw new UnsupportedFunctionalityError({
         functionality: 'Tool calling',
@@ -96,6 +98,25 @@ export class WatsonxChatModel implements LanguageModelV2 {
 
     // map framework stopSequences to API 'stop'
 
+    const requestedN = providerOptions?.watsonx?.n;
+    let nArg: number | undefined = undefined;
+    if (typeof requestedN === 'number') {
+      if (requestedN !== 1) {
+        warnings.push({ type: 'unsupported-setting', setting: 'n' });
+      }
+      nArg = 1;
+    }
+
+    const topLogprobs = providerOptions?.watsonx?.topLogprobs;
+    const topLogprobsNum =
+      typeof topLogprobs === 'number' ? topLogprobs : undefined;
+    const requestedLogprobs = providerOptions?.watsonx?.logprobs;
+    const requestedLogprobsBool =
+      typeof requestedLogprobs === 'boolean' ? requestedLogprobs : undefined;
+    const requestedContext = providerOptions?.watsonx?.context;
+    const requestedContextStr =
+      typeof requestedContext === 'string' ? requestedContext : undefined;
+
     const baseArgs = {
       temperature,
       model_id: this.modelId,
@@ -111,24 +132,23 @@ export class WatsonxChatModel implements LanguageModelV2 {
       messages: convertToWatsonxChatMessages(prompt),
       time_limit: providerOptions?.watsonx?.timeLimit,
       // OpenAPI optional parameters supported via providerOptions.watsonx
-      ...(providerOptions?.watsonx?.maxCompletionTokens != null
+      ...(typeof providerOptions?.watsonx?.maxCompletionTokens === 'number'
         ? { max_completion_tokens: providerOptions.watsonx.maxCompletionTokens }
         : {}),
-      ...(providerOptions?.watsonx?.logprobs != null
-        ? { logprobs: providerOptions.watsonx.logprobs }
-        : {}),
-      ...(providerOptions?.watsonx?.topLogprobs != null
-        ? { top_logprobs: providerOptions.watsonx.topLogprobs }
-        : {}),
+      ...(requestedLogprobsBool != null
+        ? { logprobs: requestedLogprobsBool }
+        : topLogprobsNum != null
+          ? { logprobs: true }
+          : {}),
+      ...(topLogprobsNum != null ? { top_logprobs: topLogprobsNum } : {}),
       ...(providerOptions?.watsonx?.logitBias != null
         ? { logit_bias: providerOptions.watsonx.logitBias }
         : {}),
-      ...(providerOptions?.watsonx?.n != null
-        ? { n: providerOptions.watsonx.n }
-        : {}),
+      ...(nArg != null ? { n: nArg } : {}),
       ...(providerOptions?.watsonx?.spaceId != null
         ? { space_id: providerOptions.watsonx.spaceId }
         : {}),
+      ...(requestedContextStr != null ? { context: requestedContextStr } : {}),
       ...(stopSequences != null ? { stop: stopSequences } : {}),
     };
 
@@ -166,11 +186,21 @@ export class WatsonxChatModel implements LanguageModelV2 {
             name: toolChoice.toolName,
           },
         };
-      } else if (
-        toolChoice?.type === 'auto' ||
-        toolChoice?.type === 'required'
-      ) {
+      } else if (toolChoice?.type === 'auto') {
         tool_choice_option = 'auto';
+      } else if (toolChoice?.type === 'required') {
+        if (mappedTools.length === 1) {
+          tool_choice = {
+            type: 'function',
+            function: { name: mappedTools[0]!.function.name },
+          };
+        } else {
+          warnings.push({
+            type: 'unsupported-setting',
+            setting: 'toolChoice.required',
+          });
+          tool_choice_option = 'auto';
+        }
       }
 
       return {

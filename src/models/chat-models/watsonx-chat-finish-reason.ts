@@ -13,7 +13,7 @@ export function mapWatsonxChatFinishReason(
     case 'time_limit':
       return 'other';
     case 'cancelled':
-      return 'stop';
+      return 'other';
     case 'error':
       return 'error';
     case null:

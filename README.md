@@ -1,24 +1,20 @@
-# Unofficial watsonx.ai Provider for AI SDK
+# Unofficial watsonx.ai Provider for Vercel AI SDK
 
-> [!WARNING]  
-> This SDK is experimental and primarily developed for personal use. APIs and functionality may change
-> at any time without notice. It is not an official product and is not supported by IBM. Use at your own risk,
-> particularly in production environments.
+The easiest way to use IBM watsonx.ai models with the familiar [AI SDK](https://sdk.vercel.ai/docs) interface.
+
+Run Granite, Llama, and more with a clean, minimal setup—no custom clients required.
+
+> [!WARNING]
+> Experimental and community-maintained. Not an official IBM product. APIs can change without notice.
 
 > [!NOTE]
-> For ai sdk v4, please use the version `0.0.1-alpha.1`. `0.0.2-alpha.1` is a breaking changes
-> to support vercel ai sdk v5
+> On AI SDK v4? Install `0.0.1-alpha.1`. Version `0.0.2-alpha.1` targets AI SDK v5 (`ProviderV2`) and is breaking.
 
-The **watsonx.ai provider** for the [AI SDK](https://sdk.vercel.ai/docs) makes it easy to tap into IBM’s powerful and
-diverse watsonx.ai foundation models, all through the AI SDK’s familiar, standardized interface.
+## Why use this?
 
-Built as an **unofficial adapter**, it’s perfect for teams looking to **drop IBM models straight into existing AI SDK
-projects** or **kick off new builds with watsonx.ai** from day one.
-
-This project started while I was working on an IBM SkillsBuild project. I needed a clean way to integrate watsonx models
-into my TypeScript app, and I loved the developer experience of Vercel's AI SDK. Building my own adapter felt like the
-best way to learn the watsonx APIs while making something genuinely useful for the community. So if you're already
-familiar with the AI SDK and wanted to take advantage of watsonx foundational models, this SDK is a good fit!
+- **Familiar DX**: Plug into the AI SDK you already know (`generateText`, `streamText`, `embed`).
+- **Watsonx-ready**: Works with IBM’s hosted models using your project and cluster.
+- **Zero fuss**: Configure via function args or environment variables.
 
 ## Installation
 
@@ -28,24 +24,24 @@ Install the provider with:
 npm install @rama-adi/watsonx-unofficial-ai-provider
 ```
 
-## Supported functionality
+Peer requirements:
+
+- ai: ^5.0.0
+- node: >=18
+
+## What you get
 
 - ✅ Chat generation
 - ✅ Structured output
 - ✅ Streaming response
-- ✅ Tool calling (YMMV depending on the model)
+- ✅ Tool calling (model dependent)
+- ✅ Embeddings
 
-## Examples
+## Prerequisites
 
-WIP
-
-## Requirements
-
-Before getting started, make sure you have:
-
-- An IBM Cloud account with watsonx.ai access
-- An API key from IBM Cloud
-- A Project ID from your watsonx.ai workspace
+- IBM Cloud account with watsonx.ai access
+- IBM Cloud API key (to request a Bearer token)
+- watsonx.ai Project ID
 
 ## Quick start
 
@@ -65,6 +61,37 @@ const {text} = await generateText({
     model: watsonxInstance('ibm/granite-3-8b-instruct'),
     prompt: 'Translate "Hello" to French:',
 });
+```
+
+### Streaming
+
+```ts
+import {streamText} from 'ai';
+
+const stream = await streamText({
+  model: watsonxInstance('ibm/granite-3-8b-instruct'),
+  prompt: 'Write a haiku about spring rain.',
+});
+
+for await (const delta of stream.textStream) {
+  process.stdout.write(delta);
+}
+```
+
+### Embeddings
+
+```ts
+import {embed} from 'ai';
+
+const result = await embed({
+  model: watsonxInstance.textEmbeddingModel('ibm/granite-3-8b-instruct'),
+  values: [
+    'Lighthouses are used to guide ships at sea.',
+    'Machine learning enables computers to learn from data.',
+  ],
+});
+
+console.log(result.embeddings[0].length);
 ```
 
 ## Getting a Bearer Token
@@ -93,9 +120,70 @@ curl -X POST 'https://iam.cloud.ibm.com/identity/token' \
   -d 'grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=YOUR_APIKEY'
 ```
 
+## Configuration
+
+You can pass options directly to `createWatsonx(...)` or configure via environment variables.
+
+- `cluster` (or `clusterURL`):
+  - `WATSONX_CLUSTER` or `WATSONX_CLUSTER_URL`
+  - Example cluster values: `ca-tor`, `jp-tok`, `eu-gb`, `eu-de`, `us-south`, `au-syd`
+- `projectID`:
+  - `WATSONX_PROJECT_ID`
+- `bearerToken`:
+  - `WATSONX_BEARER_TOKEN`
+
+Example using environment variables only:
+
+```ts
+import {createWatsonx} from '@rama-adi/watsonx-unofficial-ai-provider';
+
+// Assumes WATSONX_CLUSTER or WATSONX_CLUSTER_URL, WATSONX_PROJECT_ID, WATSONX_BEARER_TOKEN are set
+const watsonxInstance = createWatsonx();
+```
+
+## Pick a model
+
+Browse the [Supported Models](supported-models.md) or import lists directly:
+
+```ts
+import {
+  ChatModelLists,
+  FunctionCallingModelLists,
+  VisionModelLists,
+} from '@rama-adi/watsonx-unofficial-ai-provider';
+
+// Example: use the first chat-capable model in a region
+const modelId = ChatModelLists['us-south'][0];
+```
+
+## API at a glance
+
+- `createWatsonx(options)` → returns a provider instance
+  - Call directly for chat: `watsonxInstance(modelId, settings?)`
+  - `languageModel(modelId, settings?)` → chat model
+  - `embedding(modelId, settings?)` → embeddings
+  - `textEmbeddingModel(modelId, settings?)` / `textEmbedding(modelId, settings?)` → embeddings (aliases)
+  - `completion(modelId, settings?)` → completion (depends on available models)
+
 ## Supported Models
 
 Check out the [Supported Models](supported-models.md) page for a list of all the models you can use with this provider.
+
+You can also import the lists directly:
+
+```ts
+import {
+  ChatModelLists,
+  FunctionCallingModelLists,
+  VisionModelLists,
+} from '@rama-adi/watsonx-unofficial-ai-provider';
+```
+
+## Troubleshooting
+
+- **Missing Project ID or Cluster**: Ensure `WATSONX_PROJECT_ID` and `WATSONX_CLUSTER` (or `WATSONX_CLUSTER_URL`) are set.
+- **401 Unauthorized**: Your Bearer token may be invalid or expired—request a fresh one.
+- **404 or Network errors**: Verify the cluster region (e.g., `us-south`) and your project’s region.
 
 ## What's Next
 
@@ -108,6 +196,7 @@ generative AI into your apps today.
   this repository — they are likely related to this implementation, not IBM's services.
 - Rate limits and quotas are determined by your IBM Cloud subscription.
 - Some advanced watsonx.ai features may not be supported yet.
+- Image generation models are not supported.
 
 ## Contributing
 

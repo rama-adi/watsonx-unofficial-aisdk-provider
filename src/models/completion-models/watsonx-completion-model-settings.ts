@@ -5,16 +5,25 @@ import type { FetchFunction } from '@ai-sdk/provider-utils';
 // <autogen watsonx-completion-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-completion-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-08-08T01:02:47.903Z
-// Description: All of the supported completion models fetched from watsonx API. This only take account non-deprecated models.
+// Generated on: 2025-08-14T04:02:59.211Z
+// Description: All of the supported completion models fetched from watsonx API by region. Only non-deprecated models are included.
 
 // Models here can be called from the /chat endpoint
 // and supports the `CoreMessage[]` type
-export const CompletionModelLists = [] as const;
+export const CompletionModelLists = {
+  'ca-tor': [],
+  'jp-tok': [],
+  'eu-gb': [],
+  'eu-de': ['sdaia/allam-1-13b-instruct'],
+  'us-south': ['ibm/granite-8b-code-instruct'],
+  'au-syd': ['ibm/granite-8b-code-instruct'],
+} as const;
 
-// Type generated from the array
+export type WatsonxCompletionRegion = keyof typeof CompletionModelLists;
+
+// Type generated from the object
 export type WatsonxCompletionModelId =
-  | (typeof CompletionModelLists)[number]
+  | (typeof CompletionModelLists)[WatsonxCompletionRegion][number]
   | (string & {});
 
 // </autogen watsonx-completion-model-ids>

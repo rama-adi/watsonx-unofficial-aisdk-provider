@@ -3,25 +3,58 @@ import type { FetchFunction } from '@ai-sdk/provider-utils';
 // <autogen watsonx-embedding-model-ids>
 // ⚠️ WARNING: This section that is marked by the autogen ID of watsonx-embedding-model-ids (top and bottom) is auto-generated.
 // Do not edit manually.
-// Generated on: 2025-08-08T01:02:47.901Z
-// Description: All of the supported embedding models fetched from watsonx API. This only take account non-deprecated models.
+// Generated on: 2025-08-14T04:02:59.204Z
+// Description: All of the supported embedding models fetched from watsonx API by region. Only non-deprecated models are included.
 
 // Models here can be called from the /chat endpoint
 // and supports the `CoreMessage[]` type
-export const EmbedingModelLists = [
-  'ibm/granite-3-2b-instruct',
-  'ibm/granite-3-8b-instruct',
-  'meta-llama/llama-3-2-11b-vision-instruct',
-  'meta-llama/llama-3-3-70b-instruct',
-  'meta-llama/llama-4-maverick-17b-128e-instruct-fp8',
-  'meta-llama/llama-guard-3-11b-vision',
-  'mistralai/mistral-medium-2505',
-  'mistralai/mistral-small-3-1-24b-instruct-2503',
-] as const;
+export const EmbedingModelLists = {
+  'ca-tor': [
+    'ibm/granite-embedding-278m-multilingual',
+    'ibm/slate-125m-english-rtrvr-v2',
+    'ibm/slate-30m-english-rtrvr-v2',
+    'intfloat/multilingual-e5-large',
+  ],
+  'jp-tok': [
+    'ibm/granite-embedding-278m-multilingual',
+    'ibm/slate-125m-english-rtrvr-v2',
+    'ibm/slate-30m-english-rtrvr-v2',
+    'intfloat/multilingual-e5-large',
+    'sentence-transformers/all-minilm-l6-v2',
+  ],
+  'eu-gb': [
+    'ibm/granite-embedding-278m-multilingual',
+    'ibm/slate-125m-english-rtrvr-v2',
+    'ibm/slate-30m-english-rtrvr-v2',
+    'intfloat/multilingual-e5-large',
+    'sentence-transformers/all-minilm-l6-v2',
+  ],
+  'eu-de': [
+    'ibm/granite-embedding-278m-multilingual',
+    'ibm/slate-125m-english-rtrvr-v2',
+    'ibm/slate-30m-english-rtrvr-v2',
+    'intfloat/multilingual-e5-large',
+    'sentence-transformers/all-minilm-l6-v2',
+  ],
+  'us-south': [
+    'ibm/granite-embedding-278m-multilingual',
+    'ibm/slate-125m-english-rtrvr-v2',
+    'ibm/slate-30m-english-rtrvr-v2',
+    'intfloat/multilingual-e5-large',
+    'sentence-transformers/all-minilm-l6-v2',
+  ],
+  'au-syd': [
+    'ibm/slate-125m-english-rtrvr-v2',
+    'ibm/slate-30m-english-rtrvr-v2',
+    'intfloat/multilingual-e5-large',
+  ],
+} as const;
 
-// Type generated from the array
+export type WatsonxEmbeddingRegion = keyof typeof EmbedingModelLists;
+
+// Type generated from the object
 export type WatsonxEmbeddingModelId =
-  | (typeof EmbedingModelLists)[number]
+  | (typeof EmbedingModelLists)[WatsonxEmbeddingRegion][number]
   | (string & {});
 
 // </autogen watsonx-embedding-model-ids>

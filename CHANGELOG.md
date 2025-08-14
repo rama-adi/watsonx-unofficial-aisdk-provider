@@ -1,5 +1,18 @@
 # @rama-adi/watsonx-unofficial-ai-provider
 
+## 0.0.2-alpha.1
+
+### Breaking Changes
+- Migrate to AI SDK v5 `ProviderV2` interface.
+
+### Features
+- New `embedding`, `textEmbeddingModel`, and `textEmbedding` helpers on the provider.
+- Export model ID lists: `ChatModelLists`, `FunctionCallingModelLists`, `VisionModelLists`, and `CompletionModelLists`.
+
+### Improvements
+- Environment variable support: `WATSONX_CLUSTER`, `WATSONX_CLUSTER_URL`, `WATSONX_PROJECT_ID`, `WATSONX_BEARER_TOKEN`.
+- Better README with streaming and embeddings examples.
+
 ## 0.0.1-alpha.1
 
 ### Bug Fixes
